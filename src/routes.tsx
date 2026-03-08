@@ -3,6 +3,10 @@ import RootLayout from "./layouts/RootLayout";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
+import PostBaseLayout from "./layouts/PostBaseLayout";
+import TicketVerifyStep from "./components/TicketVerifyStep";
+import RecordWriteStep from "./components/RecordWriteStep";
+import SeasonPassStart from "./components/SeasonPassStart";
 
 // React Router 팀에서 권장하는 Data APIs & 객체 스타일 방식을 사용해 보았다.
 export const router = createBrowserRouter([
@@ -14,14 +18,29 @@ export const router = createBrowserRouter([
         index: true, // 메인 페이지 ("/")
         element: <Home />,
       },
+      { path: "login", element: <Login /> },
+      { path: "signup", element: <SignUp /> },
       {
-        path: "login",
-        element: <Login />,
+        path: "post",
+        element: <PostBaseLayout />,
+        children: [
+          {
+            path: "general",
+            children: [
+              { path: "verify", element: <TicketVerifyStep /> },
+              { path: "new", element: <RecordWriteStep /> },
+            ],
+          },
+          {
+            path: "season-pass",
+            children: [
+              { index: true, element: <SeasonPassStart /> },
+              { path: "new", element: <RecordWriteStep /> },
+            ],
+          },
+        ],
       },
-      {
-        path: "signup",
-        element: <SignUp />,
-      },
+
       //   나중에 데이터 페칭이 필요한 컴포넌트는 아래의 방식으로 불러오기
       //   {
       //     path: "example/:id",
