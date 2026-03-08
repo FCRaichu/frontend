@@ -21,6 +21,8 @@ export default function PostBaseLayout() {
   // 경로명을 체크하여 분기 처리
   const { pathname } = useLocation();
   const [selectedDate, setSeletedDate] = useState(Number);
+  // 티켓 이미지를 자식으로부터 받아오기
+  const [ticketImage, setTicketImage] = useState("");
 
   // 경로명에 'season-pass' 포함되어 있는지 확인해서 타이틀 결정
   const isSeasonPass = pathname.includes("season-pass");
@@ -31,12 +33,14 @@ export default function PostBaseLayout() {
       {/* TODO: SectionTitle 컴포넌트 생성 - 일반 티켓("티켓 인증") or 시즌권("직관 기록하기") 분기 처리 */}
       <h1>{title}</h1>
 
-      {/* TODO: 날짜 선택 컴포넌트 */}
+      {/* DONE: 날짜 선택 컴포넌트 */}
       <DatePicker value={selectedDate} onChange={setSeletedDate} />
 
       {/* Outlet: "/general" 또는 "/season-pass"를 보여줄 거임  */}
       {/* context로 하위 단계 컴포넌트들에 데이터 전달 */}
-      <Outlet context={{ selectedDate, isSeasonPass }} />
+      <Outlet
+        context={{ selectedDate, isSeasonPass, ticketImage, setTicketImage }}
+      />
     </>
   );
 }
