@@ -20,7 +20,7 @@ import { Outlet, useLocation } from "react-router-dom";
 export default function PostBaseLayout() {
   // 경로명을 체크하여 분기 처리
   const { pathname } = useLocation();
-  const [selectedDate, setSeletedDate] = useState(new Date());
+  const [selectedDate, setSeletedDate] = useState(Number);
 
   // 경로명에 'season-pass' 포함되어 있는지 확인해서 타이틀 결정
   const isSeasonPass = pathname.includes("season-pass");
