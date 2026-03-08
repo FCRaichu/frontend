@@ -16,6 +16,7 @@ export default function Header() {
           <li>
             <NavLink to="/">Home</NavLink>
           </li>
+          {/* TODO: 시즌권이면 /post/season-pass로, 일반 티켓이면 /post/general/verify 로. */}
           <li>
             <NavLink to="/post">Post</NavLink>
           </li>
