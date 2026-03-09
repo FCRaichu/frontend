@@ -1,4 +1,4 @@
-import { postLogin } from "@/apis/auth/postLogin";
+import { postLogin } from "@/apis/auth/authApi.ts";
 import { useAuthStore } from "@/stores/useAuthStore";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";

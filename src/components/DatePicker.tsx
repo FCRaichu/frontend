@@ -1,4 +1,4 @@
-import { getGames } from "@/apis/games/getGames";
+import { getGames } from "@/apis/games/gameApi";
 import { formatDate } from "@/utils/formatDate";
 import { useEffect, useState } from "react";
 

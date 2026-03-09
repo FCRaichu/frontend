@@ -1,5 +1,5 @@
-import { getGames } from "@/apis/games/getGames";
-import { getMyRecords } from "@/apis/posts/getMyPosts";
+import { getGames } from "@/apis/games/gameApi";
+import { getMyRecords } from "@/apis/posts/postApi";
 import type { Game } from "@/types/game";
 import type { Post } from "@/types/post";
 import { formatDate } from "@/utils/formatDate";

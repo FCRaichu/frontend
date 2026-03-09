@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getGames } from "@/apis/games/getGames";
+import { getGames } from "@/apis/games/gameApi";
 import type { Game } from "@/types/game";
 
 import FullCalendar from "@fullcalendar/react";
