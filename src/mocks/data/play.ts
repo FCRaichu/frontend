@@ -16,4 +16,12 @@ export const mockScheduleResponse = [
     awayTeam: "전북현대",
     stadium: "상암 월드컵 경기장",
   },
+  {
+    id: 3,
+    date: "2027-03-10T19:30:00",
+    round: 3,
+    homeTeam: "FC Seoul",
+    awayTeam: "전북현대2",
+    stadium: "상암 월드컵 경기장",
+  },
 ];
