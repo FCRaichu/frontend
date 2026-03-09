@@ -19,7 +19,6 @@ export const GameCalendar = () => {
       const res = await getGames();
       if (res.status === 200) {
         setGames(res.data);
-        console.log(res.data);
       }
     };
 
