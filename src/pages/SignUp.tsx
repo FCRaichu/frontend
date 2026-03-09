@@ -1,4 +1,4 @@
-import { postSingUp } from "@/apis/auth/postSignUp";
+import { postSingUp } from "@/apis/auth/authApi.ts";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 

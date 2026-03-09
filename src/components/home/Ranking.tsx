@@ -1,4 +1,4 @@
-import { getRankingList } from "@/apis/ranking/getRankings";
+import { getRankingList } from "@/apis/ranking/rankApi";
 import type { RankingUser } from "@/types/ranking";
 import { useEffect, useState } from "react";
 
