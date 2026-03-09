@@ -3,6 +3,8 @@
    License: none (public domain)
 */
 
+@import "tailwindcss";
+
 *,
 *::before,
 *::after {
