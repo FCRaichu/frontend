@@ -4,5 +4,6 @@ export interface Game {
   round: number;
   homeTeam: string;
   awayTeam: string;
+  opponent: string;
   stadium: string;
 }
