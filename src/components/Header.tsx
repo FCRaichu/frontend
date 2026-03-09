@@ -18,7 +18,7 @@ export default function Header() {
           </li>
           {/* TODO: 시즌권이면 /post/season-pass로, 일반 티켓이면 /post/general/verify 로. */}
           <li>
-            <NavLink to="/post">Post</NavLink>
+            <NavLink to="/post/general/verify">Post</NavLink>
           </li>
           <li>
             <NavLink to="/donation">Donation</NavLink>
