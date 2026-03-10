@@ -10,6 +10,7 @@ import SeasonPassStart from "./components/post/SeasonPassStart";
 import VerifySeasonPass from "./pages/VerifySeasonPass";
 import VerifyTicketAdmin from "./pages/VerifyTicketAdmin";
 import Donation from "./pages/Donation";
+import { GamePicker } from "./components/post/GamePickerStep";
 
 // React Router 팀에서 권장하는 Data APIs & 객체 스타일 방식을 사용해 보았다.
 export const router = createBrowserRouter([
@@ -31,6 +32,7 @@ export const router = createBrowserRouter([
           {
             path: "general",
             children: [
+              { path: "date", element: <GamePicker /> },
               { path: "verify", element: <TicketVerifyStep /> },
               { path: "new", element: <RecordWriteStep /> },
             ],

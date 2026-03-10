@@ -5,6 +5,7 @@ interface PostContext {
   setTicketImage: React.Dispatch<React.SetStateAction<string>>;
 }
 
+// 일반 유저가 티켓 인증하는 컴포넌트 (두 번째 스텝)
 export default function TicketVerifyStep() {
   const navigation = useNavigate();
   // DONE: Outlet으로 받은 데이터를 TicketVerifyUI에 Props로 넣어준다.
