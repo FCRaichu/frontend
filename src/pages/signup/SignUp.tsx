@@ -44,7 +44,7 @@ export default function SignUp() {
           회원 가입
         </Typography>
         <Typography variant="h4" color="text-disabledGray">
-          FC라이츄 회원 회원가입
+          FC라이츄 회원가입
         </Typography>
       </div>
 

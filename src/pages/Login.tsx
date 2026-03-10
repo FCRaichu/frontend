@@ -1,5 +1,8 @@
 import { postLogin } from "@/apis/auth/authApi.ts";
+import Button from "@/components/common/Button";
+import Input from "@/components/common/Input";
 import { useAuthStore } from "@/stores/useAuthStore";
+import Typography from "@/styles/common/Typography";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -36,22 +39,39 @@ export default function Login() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h1>로그인</h1>
-      <h2>FC라이츄 회원 로그인</h2>
-      <input
-        type="text"
-        placeholder="userId"
-        name="userId"
-        onChange={handleChange}
-      />
-      <input
-        type="text"
-        placeholder="비밀번호"
-        name="password"
-        onChange={handleChange}
-      />
-      <button type="submit">로그인</button>
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col items-center pt-[15rem] w-full h-[calc(100vh-61px)] bg-secondary box-border overflow-hidden"
+    >
+      <div className="flex flex-col items-center mb-16">
+        <Typography variant="h1" color="text-background" className="mb-4">
+          로그인
+        </Typography>
+        <Typography variant="h4" color="text-disabledGray">
+          FC라이츄 회원 로그인
+        </Typography>
+      </div>
+      <div className="flex flex-col items-start w-[500px]">
+        <div className="flex flex-col gap-8 w-full">
+          <Input
+            label="ID"
+            name="userId"
+            placeholder="아이디"
+            onChange={handleChange}
+          />
+          <Input
+            label="비밀번호"
+            name="password"
+            placeholder="비밀번호"
+            type="password"
+            onChange={handleChange}
+          />
+        </div>
+
+        <Button type="submit" width="fixed" className="mt-16">
+          로그인
+        </Button>
+      </div>
     </form>
   );
 }
