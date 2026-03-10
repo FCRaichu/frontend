@@ -2,13 +2,14 @@ import { createBrowserRouter } from "react-router-dom";
 import RootLayout from "./layouts/RootLayout";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import SignUp from "./pages/SignUp";
+import SignUp from "./pages/signup/SignUp";
 import PostBaseLayout from "./layouts/PostBaseLayout";
 import TicketVerifyStep from "./components/post/TicketVerifyStep";
 import RecordWriteStep from "./components/post/RecordWriteStep";
 import SeasonPassStart from "./components/post/SeasonPassStart";
 import VerifySeasonPass from "./pages/VerifySeasonPass";
 import VerifyTicketAdmin from "./pages/VerifyTicketAdmin";
+import Donation from "./pages/Donation";
 
 // React Router 팀에서 권장하는 Data APIs & 객체 스타일 방식을 사용해 보았다.
 export const router = createBrowserRouter([
@@ -22,6 +23,7 @@ export const router = createBrowserRouter([
       },
       { path: "login", element: <Login /> },
       { path: "signup", element: <SignUp /> },
+      { path: "donation", element: <Donation /> },
       {
         path: "post",
         element: <PostBaseLayout />,
