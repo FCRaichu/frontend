@@ -1,40 +1,70 @@
 import { useAuthStore } from "@/stores/useAuthStore";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, type NavLinkRenderProps } from "react-router-dom";
+import fcseoul_logo from "@/assets/fcseoul_logo.png";
 
 export default function Header() {
   // 전역 store에서 user 가져오기 (콕 찝어서 가져와야 다른 상태가 바뀌었을 때 리렌더링 안 됨.)
   const { user } = useAuthStore();
-  //   const navigation = useNavigate();
+
+  const navItemStyle = ({ isActive }: NavLinkRenderProps) =>
+    `text-h4 transition-colors ${
+      isActive ? "text-primary font-bold" : "text-textMain hover:text-primary"
+    }`;
 
   return (
-    // tailwind로 디자인
-    <header>
-      <nav>
-        <Link to="/" className="logo">
-          logo
-        </Link>
-        <ul>
-          <li>
-            <NavLink to="/">Home</NavLink>
-          </li>
-          {/* TODO: 시즌권이면 /post/season-pass로, 일반 티켓이면 /post/general/verify 로. */}
-          <li>
-            <NavLink to="/post/general/verify">Post</NavLink>
-          </li>
-          <li>
-            <NavLink to="/donation">Donation</NavLink>
-          </li>
-        </ul>
-        <div>
+    <header className="w-full border-b border-border bg-white sticky top-0 z-50">
+      <nav className="flex flex-row items-center justify-between w-full h-15 px-10 mx-auto">
+        <div className="flex items-center gap-10">
+          <Link to="/" className="flex items-center">
+            <img src={fcseoul_logo} alt="fcseoul_logo" className="h-8 w-auto" />
+          </Link>
+
+          <ul className="flex items-center gap-8">
+            <li>
+              <NavLink to="/" className={navItemStyle}>
+                Home
+              </NavLink>
+            </li>
+            {/* DONE: 시즌권이면 /post/season-pass로, 일반 티켓이면 /post/general/verify 로. */}
+            {/* -> post로 보내면 알아서 general인지 season-pass인지 판단하도록 로직 구현. */}
+            <li>
+              <NavLink to="/post" className={navItemStyle}>
+                Post
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/donation" className={navItemStyle}>
+                Donation
+              </NavLink>
+            </li>
+          </ul>
+        </div>
+
+        <div className="flex items-center gap-5 text-body-md">
           {user ? (
-            <span>
-              환영합니다, <b>{user.nickname}님</b>
-            </span>
+            <div className="flex items-center gap-2 text-textSub">
+              <span className="text-body-sm">환영합니다,</span>
+              <span className="text-button-md text-primary">
+                {user.nickname}
+              </span>
+              <span className="text-body-sm">님</span>
+            </div>
           ) : (
-            <>
-              <Link to="/login">Login</Link>
-              <Link to="/signup">Join Us</Link>
-            </>
+            <div className="flex items-center gap-4 text-textSub">
+              <Link
+                to="/login"
+                className="hover:text-textMain transition-colors"
+              >
+                Login
+              </Link>
+              <div className="w-[1px] h-3 bg-border" />
+              <Link
+                to="/signup"
+                className="text-button-md text-primary hover:text-hover transition-colors"
+              >
+                Join Us
+              </Link>
+            </div>
           )}
         </div>
       </nav>
