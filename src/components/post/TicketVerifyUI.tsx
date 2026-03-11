@@ -29,15 +29,32 @@ export default function TicketVerifyUI({ onImageChange, onNext }: Props) {
   };
 
   return (
-    <div>
-      {/* TODO: 이미지 업로드 프리뷰 */}
-      <input
-        type="file"
-        accept="image/jpg, image/jpeg, image/png"
-        name="ticket_image"
-        onChange={handleChange}
-      />
-      <button onClick={onNext}>Next</button>
+    <div className="flex flex-col gap-6 w-full max-w-md mx-auto p-4">
+      <div className="flex flex-col items-center justify-center w-full min-h-62.5 border-2 border-dashed border-gray-300 rounded-lg p-6">
+        <div className="mb-6 text-gray-400 text-sm flex items-center justify-center h-32 w-full bg-gray-50 rounded">
+          티켓 미리보기
+        </div>
+
+        <input
+          type="file"
+          accept="image/jpg, image/jpeg, image/png"
+          name="ticket_image"
+          onChange={handleChange}
+          className="block w-full text-sm text-gray-500
+            file:mr-4 file:py-2 file:px-4
+            file:rounded-md file:border-0
+            file:text-sm file:font-medium
+            file:bg-gray-200 file:text-gray-700
+            hover:file:bg-gray-300 cursor-pointer"
+        />
+      </div>
+
+      <button
+        onClick={onNext}
+        className="w-full py-3 border border-gray-300 rounded-md font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+      >
+        Next
+      </button>
     </div>
   );
 }
