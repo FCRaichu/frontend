@@ -13,7 +13,8 @@ import Donation from "./pages/Donation";
 import { GamePicker } from "./components/post/GamePickerStep";
 import LandingLayout from "./layouts/LandingLayout";
 import IntroAnimation from "./components/landing/IntroAnimation";
-
+import AdminLayout from "./layouts/AdminLayout";
+import VerifyTicketAdminTest from "./pages/VerifyTicketAdminTest";
 
 // React Router 팀에서 권장하는 Data APIs & 객체 스타일 방식을 사용해 보았다.
 export const router = createBrowserRouter([
@@ -24,6 +25,16 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <IntroAnimation />,
+      },
+    ],
+  },
+  {
+    path: "/admin",
+    element: <AdminLayout />,
+    children: [
+      {
+        path: "verify-tickets",
+        element: <VerifyTicketAdminTest />,
       },
     ],
   },
