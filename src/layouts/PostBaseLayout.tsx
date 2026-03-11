@@ -13,8 +13,10 @@
 // 2-2 는 post/season-pass/new
 // 2-1과 2-2는 같은 컴포넌트 사용할 것.
 
+import { StepTracker } from "@/components/post/StepTracker";
 import DatePicker from "@/components/verify/DatePicker";
 import { useAuthStore } from "@/stores/useAuthStore";
+import Typography from "@/styles/common/Typography";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
@@ -44,7 +46,10 @@ export default function PostBaseLayout() {
       if (isSeasonPass) {
         navigate("/post/season-pass", { state: { gameId }, replace: true });
       } else {
-        navigate("/post/general/verify", { state: { gameId }, replace: true });
+        navigate("/post/general/date", {
+          state: { gameId: gameId || 1 },
+          replace: true,
+        });
       }
       return;
     }
@@ -62,16 +67,20 @@ export default function PostBaseLayout() {
     }
   }, [gameId, isSeasonPass, location.pathname, navigate]);
 
-  // DONE: 경로명이 아니라 유저 정보에 포함되어 있는지 확인해서 타이틀 결정!
-  // TODO: Text를 공통 컴포넌트로.
-  const title = isSeasonPass ? "직관 기록하기" : "티켓 인증";
-
   // TODO: gameId가 로딩중이거나 체크 중일 때 빈 화면 방지
 
   return (
-    <>
-      {/* TODO: SectionTitle 컴포넌트 생성 - 일반 티켓("티켓 인증") or 시즌권("직관 기록하기") 분기 처리 */}
-      <h1>{title}</h1>
+    <div
+      className={`
+      flex flex-col items-center w-full mx-auto pt-16
+    `}
+    >
+      <Typography variant="h1" className="mb-10">
+        직관 기록하기
+      </Typography>
+
+      {/* 단계를 보여주는 UI */}
+      <StepTracker />
 
       {/* DONE: 날짜 선택 컴포넌트 */}
       <DatePicker value={selectedGameId} onChange={setSelectedGameId} />
@@ -81,6 +90,6 @@ export default function PostBaseLayout() {
       <Outlet
         context={{ selectedGameId, isSeasonPass, ticketImage, setTicketImage }}
       />
-    </>
+    </div>
   );
 }

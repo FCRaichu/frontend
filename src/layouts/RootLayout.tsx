@@ -5,12 +5,12 @@ import { Outlet } from "react-router-dom";
 export default function RootLayout() {
   return (
     // DONE: Header 적용
-    <>
+    <div className="flex flex-col min-h-screen">
       <Header />
-      <main>
-        {/* 자식 라우트가 이 자리에 들어온다! 반드시 필요한 코드 */}
+
+      <main className="flex-1 w-full mx-auto">
         <Outlet />
       </main>
-    </>
+    </div>
   );
 }
