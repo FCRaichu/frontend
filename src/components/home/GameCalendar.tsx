@@ -10,6 +10,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { useNavigate } from "react-router-dom";
 
 import "./GameCalendar.css";
+import Typography from "@/styles/common/Typography";
 
 export const GameCalendar = () => {
   const navigate = useNavigate();
@@ -78,18 +79,31 @@ export const GameCalendar = () => {
     <div
       className={`
     custom-calendar-wrapper
-    w-full max-w-5xl mx-auto mt-10
+    w-full max-w-6xl mx-auto mt-16
     text-secondary
     `}
     >
       {/* 상단 타이틀 & 커스텀 헤더 */}
-      <div className="text-center">
-        <h1 className={`text-6xl font-extrabold font-serif tracking-wider`}>
+      <div className="relative text-center mb-24">
+        <h1 className="text-8xl font-black text-secondary italic tracking-tighter opacity-5 absolute left-1/2 -top-12 -translate-x-1/2 select-none whitespace-nowrap">
           FC SEOUL MATCHES
         </h1>
-        <h2 className="mt-4 text-2xl font-bold">
-          {currentYear}년 {currentMonth}월 FC서울 경기 일정
+
+        <h2 className="relative text-6xl font-black text-secondary leading-tight uppercase">
+          경기 일정 <span className="text-primary italic">.</span>
         </h2>
+
+        <div className="mt-4 flex items-center justify-center gap-3">
+          <div className="h-px w-12 bg-border"></div>
+          <Typography
+            variant="body-md"
+            color="text-textSub"
+            className="font-bold tracking-[0.2em] uppercase"
+          >
+            {currentYear} SEASON — {currentMonth}월
+          </Typography>
+          <div className="h-px w-12 bg-border"></div>
+        </div>
       </div>
 
       {/* 달력 날짜 넘기기 & 오늘, 경기일 표시 */}
@@ -120,7 +134,7 @@ export const GameCalendar = () => {
 
         <div className="flex items-center gap-4 text-sm text-textSub font-medium">
           <div className="flex items-center gap-1.5">
-            <div className="w-5 h-5 border-[1.5px] border-[#D91920] rounded-sm"></div>
+            <div className="w-5 h-5 border-[1.5px] border-primary rounded-sm"></div>
             <span>오늘</span>
           </div>
           <div className="flex items-center gap-1.5">
