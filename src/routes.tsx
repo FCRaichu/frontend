@@ -4,11 +4,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import SignUp from "./pages/signup/SignUp";
 import PostBaseLayout from "./layouts/PostBaseLayout";
-import TicketVerifyStep from "./components/post/TicketVerifyStep";
 import RecordWriteStep from "./components/post/RecordWriteStep";
-import SeasonPassStart from "./components/post/SeasonPassStart";
-import VerifySeasonPass from "./pages/VerifySeasonPass";
-import VerifyTicketAdmin from "./pages/VerifyTicketAdmin";
 import Donation from "./pages/Donation";
 import { GamePicker } from "./components/post/GamePickerStep";
 import LandingLayout from "./layouts/LandingLayout";
@@ -27,6 +23,16 @@ export const router = createBrowserRouter([
     ],
   },
   {
+    path: "/admin",
+    element: <AdminLayout />,
+    children: [
+      {
+        path: "verify-tickets",
+        element: <VerifyTicketAdminTest />,
+      },
+    ],
+  },
+  {
     path: "/",
     element: <RootLayout />, // 공통 레이아웃 적용
     children: [
@@ -41,25 +47,10 @@ export const router = createBrowserRouter([
         path: "post",
         element: <PostBaseLayout />,
         children: [
-          {
-            path: "general",
-            children: [
-              { path: "date", element: <GamePicker /> },
-              { path: "verify", element: <TicketVerifyStep /> },
-              { path: "new", element: <RecordWriteStep /> },
-            ],
-          },
-          {
-            path: "season-pass",
-            children: [
-              { index: true, element: <SeasonPassStart /> },
-              { path: "new", element: <RecordWriteStep /> },
-            ],
-          },
+          { index: true, element: <GamePicker /> },
+          { path: "new", element: <RecordWriteStep /> },
         ],
       },
-      { path: "season-pass/verify", element: <VerifySeasonPass /> },
-      { path: "admin/verify-tickets", element: <VerifyTicketAdmin /> },
 
       //   나중에 데이터 페칭이 필요한 컴포넌트는 아래의 방식으로 불러오기
       //   {
