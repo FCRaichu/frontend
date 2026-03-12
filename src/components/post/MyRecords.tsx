@@ -1,11 +1,14 @@
 import { getGames } from "@/apis/games/gameApi";
 import { getMyRecords } from "@/apis/posts/postApi";
+import Typography from "@/styles/common/Typography";
 import type { Game } from "@/types/game";
 import type { Post } from "@/types/post";
 import { formatDate } from "@/utils/formatDate";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const MyRecords = () => {
+  const navigate = useNavigate();
   const [records, setRecords] = useState<Post[]>([]);
 
   useEffect(() => {
@@ -33,7 +36,8 @@ export const MyRecords = () => {
             game: gameMap.get(record.gameId) || {},
           }));
 
-          setRecords(mergedRecords);
+          // TODO: 서버에 최신 두 개 API 요청하기
+          setRecords(mergedRecords.slice(0, 2));
         }
       } catch (e) {
         console.log(e);
@@ -42,17 +46,92 @@ export const MyRecords = () => {
 
     fetchData();
   }, []);
+
+  const handlePostById = (postId: number) => {
+    navigate(`/post/${postId}`);
+  };
+
+  const handleAllPosts = () => {
+    navigate("/post/all");
+  };
+
   return (
-    <div>
-      {records.map((record) => (
-        <div key={record.postId}>
-          <p>제목: {record.title}</p>
-          <p>내용: {record.content}</p>
-          <img src={record.images?.[0]} alt="직관 기록 대표 이미지" />
-          <p>날짜: {formatDate(record.createdAt)}</p>
-          <p>상태: {record.status}</p>
-        </div>
-      ))}
+    <div className="flex flex-col mt-60 mx-auto gap-16 max-w-6xl">
+      {/* 헤더 */}
+      <div className="relative text-center mb-10">
+        <h1 className="text-8xl font-black text-secondary italic tracking-tighter opacity-5 absolute left-1/2 -top-12 -translate-x-1/2 select-none whitespace-nowrap uppercase">
+          My Football Diary
+        </h1>
+        <h2 className="relative text-6xl font-black text-secondary leading-tight">
+          나의 직관 일지 <span className="text-primary">.</span>
+        </h2>
+      </div>
+
+      {/* 카드 리스트 */}
+      <div className="flex flex-col gap-8">
+        {records.map((record) => (
+          <button
+            key={record.postId}
+            onClick={() => handlePostById(record.postId)}
+            className={`
+              flex flex-row justify-between gap-8 p-8 min-h-75
+              border border-border rounded-2xl shadow-md bg-white overflow-hidden cursor-pointer
+              transition-all duration-300 hover:shadow-2xl hover:border-primary/30 hover:-translate-y-1 group
+            `}
+          >
+            <div className="flex flex-col items-start flex-1 gap-4 text-left">
+              <Typography
+                variant="h3"
+                color="text-textMain"
+                className="group-hover:text-primary transition-colors duration-300"
+              >
+                {record.title}
+              </Typography>
+              <Typography
+                variant="body-md"
+                color="text-textMain"
+                className="leading-relaxed line-clamp-5 opacity-80"
+              >
+                {record.content}
+              </Typography>
+
+              <Typography
+                variant="body-sm"
+                color="text-gray-400"
+                className="mt-auto flex items-end gap-2 font-medium"
+              >
+                <span className="text-secondary/60">
+                  {formatDate(record.createdAt)}
+                </span>
+                <span className="text-border">|</span>
+                <span>{record.game?.opponent || "상대팀 정보 없음"}</span>
+                <span className="text-border">•</span>
+                <span>{record.game?.stadium || "경기장 정보 없음"}</span>
+              </Typography>
+            </div>
+
+            {record.images?.[0] && (
+              <div className="w-1/3 min-w-62.5 overflow-hidden rounded-xl">
+                <img
+                  src={record.images[0]}
+                  alt="직관 기록 이미지"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+              </div>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/*  */}
+      <div className="text-center mt-8">
+        <button
+          onClick={() => handleAllPosts}
+          className="text-gray-400 border-b border-gray-400 pb-1 text-lg hover:text-primary hover:border-primary transition-all cursor-pointer font-medium"
+        >
+          전체 글 보러 가기
+        </button>
+      </div>
     </div>
   );
 };
