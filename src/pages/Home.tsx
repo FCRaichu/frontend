@@ -4,7 +4,7 @@ import { MyRecords } from "@/components/home/MyPosts";
 
 export default function Home() {
   return (
-    <main>
+    <main className="mb-60">
       {/* 캘린더 */}
       <GameCalendar />
       {/* 직관 기록 */}

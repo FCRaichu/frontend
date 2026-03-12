@@ -4,7 +4,7 @@ import { Outlet, useLocation } from "react-router-dom";
 
 // 공통 UI
 export default function RootLayout() {
-  const [backColor, setBackColor] = useState("secondary");
+  const [backColor, setBackColor] = useState("background");
   const location = useLocation();
 
   // DONE: 경로에 따라 바탕 색상 바꾸기
