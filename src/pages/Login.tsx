@@ -1,6 +1,7 @@
 import { postLogin } from "@/apis/auth/authApi.ts";
 import Button from "@/components/common/Button";
 import Input from "@/components/common/Input";
+import LogoAnimation from "@/components/login/LogoAnimation";
 import { useAuthStore } from "@/stores/useAuthStore";
 import Typography from "@/styles/common/Typography";
 import React, { useState } from "react";
@@ -41,9 +42,10 @@ export default function Login() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col items-center pt-40 w-full h-screen bg-secondary box-border overflow-hidden"
+      className="flex flex-col items-center pt-40 w-full h-screen
+      bg-secondary box-border overflow-hidden"
     >
-      <div className="mb-40 text-white">로고 스윽 지나가는 거 보여줄 예정</div>
+      <LogoAnimation />
       <div className="flex flex-col items-center mb-16">
         <Typography variant="h1" color="text-background" className="mb-4">
           로그인
