@@ -1,6 +1,6 @@
 import Header from "@/components/common/Header";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 
 // 공통 UI
