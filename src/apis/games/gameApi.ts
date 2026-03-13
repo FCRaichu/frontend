@@ -2,7 +2,8 @@ import { api } from "../axiosInstance";
 
 // 경기 일정 전체 조회
 export const getGames = async () => {
-  const res = await api.get(`/api/games`);
+  // const res = await api.get(`/api/games?year=2026&month=3`);
+  const res = await api.get(`/api/games?year=2026&month=3`);
   return res;
 };
 
