@@ -2,6 +2,7 @@ import { MONTH_NAMES } from "@/data/date";
 import { useAuthStore } from "@/stores/useAuthStore";
 import Typography from "@/styles/common/Typography";
 import type { Post } from "@/types/post";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface Props {
@@ -13,7 +14,10 @@ export default function AllPostsImages({ posts, observer }: Props) {
   const { user } = useAuthStore();
   const navigate = useNavigate();
 
-  // Ref가 생성될 때 observer 등록
+  // 스크롤 할 때 이미지가 위 아래로 눕는 효과 넣기 위해 전체 컨테이너를 잡아야 함
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // 연도 감지하는 Ref 등록 함수
   const setRef = (el: HTMLDivElement | null, year: string) => {
     if (el && observer) {
       el.setAttribute("data-year", year);
@@ -21,8 +25,53 @@ export default function AllPostsImages({ posts, observer }: Props) {
     }
   };
 
+  // 스크롤 할 때 기울기 효과 적용
+  useEffect(() => {
+    let currentScroll = window.scrollY;
+    let velocity = 0;
+    let renderTilt = 0;
+    let animationFrameId: number;
+
+    // 부드러움 감속을 위한 보간 함수
+    const lerp = (start: number, end: number, factor: number) => {
+      return start + (end - start) * factor;
+    };
+
+    const handleScroll = () => {
+      const newScroll = window.scrollY;
+      velocity = newScroll - currentScroll;
+      currentScroll = newScroll;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    const render = () => {
+      // 속도를 서서히 0으로 줄여줄 거임
+      velocity = lerp(velocity, 0, 0.15);
+      renderTilt = lerp(renderTilt, velocity, 0.4);
+
+      if (containerRef.current) {
+        const clampedTilt = Math.max(-15, Math.min(30, renderTilt * -0.3));
+
+        containerRef.current.style.setProperty("--tilt", `${clampedTilt}deg`);
+      }
+
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
+
   return (
-    <div className="flex flex-wrap gap-x-4 gap-y-56 items-start px-10 pb-40">
+    <div
+      ref={containerRef}
+      className="flex flex-wrap gap-x-4 gap-y-56 items-start px-10 pb-40"
+    >
       {posts.map((post, index) => {
         const date = new Date(post.createdAt);
         const currentMonth = date.getMonth();
@@ -36,8 +85,12 @@ export default function AllPostsImages({ posts, observer }: Props) {
         return (
           <div
             key={post.postId}
-            className={`relative flex flex-col`}
+            className={`relative flex flex-col will-change-transform`}
             ref={isFirstMonth ? (el) => setRef(el, currentYear) : null}
+            style={{
+              transform: "perspective(1000px) rotateX(var(--tilt, 0deg))",
+              transformOrigin: "center center",
+            }}
           >
             {/* 월별 첫 번째 콘텐츠이면 그 위에다가 MONTH 이름 달아주자 */}
             {/* DONE: 라벨 있는 사진과 없는 사진의 레이아웃이 다르다.. */}
