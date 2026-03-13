@@ -64,7 +64,7 @@ function Test() {
       params.append("grant_type", "password");
 
       const response = await fetch(
-        "https://raichu.inwoohub.com/realms/fcraichu/protocol/openid-connect/token",
+        "https://raichu.inwoohub.com/auth/realms/fcraichu/protocol/openid-connect/token",
         {
           method: "POST",
           headers: {
@@ -117,7 +117,7 @@ function Test() {
       params.append("refresh_token", refreshToken);
 
       const response = await fetch(
-        "http://localhost:8080/realms/raichu/protocol/openid-connect/token",
+        "https://raichu.inwoohub.com/auth/realms/fcraichu/protocol/openid-connect/token",
         {
           method: "POST",
           headers: {
