@@ -1,6 +1,5 @@
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
-import "./index.css";
 
 type LoginForm = {
   username: string;
