@@ -116,6 +116,8 @@ function Test() {
       params.append("grant_type", "refresh_token");
       params.append("refresh_token", refreshToken);
 
+      alert(params);
+
       const response = await fetch(
         "https://raichu.inwoohub.com/auth/realms/fcraichu/protocol/openid-connect/token",
         {
