@@ -1,5 +1,4 @@
 import Header from "@/components/common/Header";
-import Test from "@/pages/Test";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
