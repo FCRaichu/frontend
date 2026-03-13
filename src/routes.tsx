@@ -11,15 +11,10 @@ import IntroAnimation from "./components/landing/IntroAnimation";
 import PostWriteBaseLayout from "./layouts/PostBaseLayout";
 import { DetailPost } from "./components/post/DetailPost";
 import MyPostLayout from "./layouts/MyPostLayout";
-import Test from "./pages/Test";
 import { AllPosts } from "./components/post/AllPosts";
 
 // React Router 팀에서 권장하는 Data APIs & 객체 스타일 방식을 사용해 보았다.
 export const router = createBrowserRouter([
-  {
-    path: "/test",
-    element: <Test />,
-  },
   {
     path: "/landing",
     element: <LandingLayout />,
