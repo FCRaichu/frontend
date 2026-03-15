@@ -18,7 +18,7 @@
 import { StepTracker } from "@/components/post/StepTracker";
 import DatePicker from "@/components/post/DatePicker";
 import Typography from "@/styles/common/Typography";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 
 export default function PostWriteBaseLayout() {
@@ -26,11 +26,25 @@ export default function PostWriteBaseLayout() {
   const location = useLocation();
   const { gameId } = location.state || {};
 
-  // DONE: 티켓, 시즌 관련 전부 삭제
+  const [step, setStep] = useState<1 | 2>(1); // (1) 날짜 선택 / (2) 글 작성
 
+  // DONE: 티켓, 시즌 관련 전부 삭제
   const [selectedGameId, setSelectedGameId] = useState<number>(
     Number(gameId) || 0,
   ); // 초기값으로 state에서 넘겨받은 gameId 설정
+
+  // 전체 step의 개수, 스텝별 이름, 현재 스텝 step tracker 컴포넌트에 넘겨줄 건데
+  // 그럼 부모에서 현재 스텝이 얼마인지 관리해줘야 함.
+  // 1. useLocation 써서 받아오는 게 나을지
+  // 2. context 써서 set 해주는 게 나을지
+  // 1번 방식이 덜 복잡하고 컴포넌트 간 데이터 이동이 없어서 더 나을 듯? 공부해보자.
+  useEffect(() => {
+    if (location.pathname === "/post") {
+      setStep(1);
+    } else {
+      setStep(2);
+    }
+  }, [location.pathname]);
 
   // TODO: gameId가 로딩중이거나 체크 중일 때 빈 화면 방지
 
@@ -45,7 +59,8 @@ export default function PostWriteBaseLayout() {
       </Typography>
 
       {/* 단계를 보여주는 UI */}
-      <StepTracker />
+      {/* step tracker에 현재 스텝과 스텝별 이름 전달 */}
+      <StepTracker step={step} stepName={["경기 선택", "직관 기록"]} />
 
       {/* DONE: 날짜 선택 컴포넌트 */}
       <DatePicker value={selectedGameId} onChange={setSelectedGameId} />

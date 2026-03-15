@@ -6,9 +6,9 @@ import { Outlet, useLocation } from "react-router-dom";
 // 공통 UI
 export default function RootLayout() {
   const [backColor, setBackColor] = useState("background");
-  const [gap, setGap] = useState(16);
   const location = useLocation();
   const { user } = useAuthStore();
+  const isPostPath = location.pathname.startsWith(`/post/${user?.id}`);
 
   // DONE: 경로에 따라 바탕 색상 바꾸기
   useEffect(() => {
@@ -17,16 +17,12 @@ export default function RootLayout() {
     } else {
       setBackColor("secondary");
     }
-
-    if (location.pathname !== `/post/${user?.id}/all`) {
-      setGap(16);
-    } else {
-      setGap(0);
-    }
   }, [location.pathname]);
 
   return (
-    <div className={`flex flex-col min-h-screen gap-${gap} bg-${backColor}`}>
+    <div
+      className={`flex flex-col min-h-screen gap-${isPostPath ? "0" : "16"} bg-${backColor}`}
+    >
       {/* DONE: 로그인 경로에서 헤더 없애기 */}
       {location.pathname !== "/login" && <Header />}
 
