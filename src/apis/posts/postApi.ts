@@ -33,3 +33,33 @@ export const getRecordById = async (id: number) => {
   const res = await api.get(`/api/posts/${id}`);
   return res;
 };
+
+// 직관 기록 수정
+export const putMyRecord = async (postId: number, data: any) => {
+  const formData = new FormData();
+
+  formData.append("gameId", String(data.gameId));
+  formData.append("title", data.title);
+  formData.append("content", data.content);
+
+  data.existingImages.forEach((img: string) => {
+    formData.append("existingImages", img);
+  });
+
+  data.images.forEach((file: File) => {
+    formData.append("images", file);
+  });
+
+  const res = await api.put(`/api/posts/${postId}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return res;
+};
+
+// 직관 기록 삭제
+export const deleteMyRecord = async (id: number) => {
+  const res = await api.delete(`/api/posts/${id}`);
+  return res;
+};

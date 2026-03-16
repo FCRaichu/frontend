@@ -42,6 +42,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <GamePicker /> },
           { path: "new", element: <RecordWriteStep /> },
+          { path: "edit/:postId", element: <RecordWriteStep /> },
         ],
       },
       {

@@ -1,8 +1,8 @@
-import { postMyRecord } from "@/apis/posts/postApi";
+import { postMyRecord, putMyRecord } from "@/apis/posts/postApi";
 import { useAuthStore } from "@/stores/useAuthStore";
 import type { PostRequest } from "@/types/post";
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { TbPhotoPlus } from "react-icons/tb";
 import { PiSmileyFill } from "react-icons/pi";
 import { LuFilePen } from "react-icons/lu";
@@ -13,26 +13,45 @@ import Typography from "@/styles/common/Typography";
 // 부모로부터 context로 받아온 데이터 활용하기
 interface PostContext {
   selectedGameId: number;
+  initialData: PostRequest;
+  isEditMode: boolean;
 }
 
 // DONE: 날짜 데이터를 어떻게 받아올지 -> useOutletContext 사용
 export default function RecordWriteStep() {
-  const { user } = useAuthStore();
   const navigate = useNavigate();
-  // 경기 데이터
-  const { selectedGameId } = useOutletContext<PostContext>();
+  const { user } = useAuthStore();
+  const { postId } = useParams();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 직관 기록 post 시 보낼 데이터 정의
-  const [formData, setFormData] = useState<Omit<PostRequest, "images">>({
-    gameId: selectedGameId,
-    userId: Number(user?.id),
-    title: "",
-    content: "",
+  // 부모 outlet으로부터 데이터 수신함.
+  const context = useOutletContext<PostContext>() || {};
+  const { selectedGameId, initialData, isEditMode } = context;
+
+  // 직관 기록 post 시 보낼 데이터 정의 (근데 이제 수정 모드를 반영함)
+  const [formData, setFormData] = useState({
+    title: isEditMode ? initialData.title : "",
+    content: isEditMode ? initialData.content : "",
   });
+
+  // 이미지 상태 관리 (서버에 저장된 기존 이미지 URL) -> 수정 모드일 때
+  const [existingImages, setExistingImages] = useState<File[]>(
+    isEditMode ? initialData.images : [],
+  );
 
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
+
+  // 부모로부터 Initial 데이터 도착하면 상태 업데이트
+  useEffect(() => {
+    if (isEditMode && initialData) {
+      setFormData({
+        title: initialData.title || "",
+        content: initialData.content || "",
+      });
+      setExistingImages(initialData.images || []);
+    }
+  }, [initialData, isEditMode]);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, title: e.target.value }));
@@ -51,8 +70,11 @@ export default function RecordWriteStep() {
 
     // FileList를 배열로 변환
     const selectedFiles = Array.from(files);
+
+    // (기존 이미지 개수 + 새로 추가할 이미지 개수)를!! 체크함.
+    const totalCount = existingImages.length + imageFiles.length;
     // 4개만 업로드 허용하도록
-    const availableSlots = 4 - imageFiles.length;
+    const availableSlots = 4 - totalCount;
 
     if (availableSlots <= 0) {
       alert("이미지는 최대 4장까지 업로드 할 수 있습니다.");
@@ -64,15 +86,18 @@ export default function RecordWriteStep() {
 
     setImageFiles((prev) => [...prev, ...filesToUpload]);
     setPreviews((prev) => [...prev, ...newPreviews]);
-
-    // 동일 파일 재선택 가능하도록 초기화
-    e.target.value = "";
+    e.target.value = ""; // 동일 파일 재선택 가능하도록 초기화
   };
 
-  const removeImage = (index: number) => {
+  // 기존 이미지 삭제 (상태에서만 제거)
+  const removeExistingImage = (index: number) => {
+    setExistingImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const removeNewImage = (index: number) => {
     setImageFiles((prev) => prev.filter((_, i) => i !== index));
     setPreviews((prev) => {
-      URL.revokeObjectURL(prev[index]); // 메모리 해제
+      URL.revokeObjectURL(prev[index]);
       return prev.filter((_, i) => i !== index);
     });
   };
@@ -80,17 +105,37 @@ export default function RecordWriteStep() {
   // DONE: 제출 로직 작성하기
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!formData.title.trim()) return alert("제목을 입력해주세요.");
+    if (!selectedGameId) return alert("경기를 선택해주세요.");
+
     try {
-      const res = await postMyRecord({
-        ...formData,
-        images: imageFiles,
-      } as PostRequest);
-      if (res.status === 201) {
-        alert("직관 기록이 완료되었습니다.");
-        navigate(`/post/${res.data.userId}/all`);
+      let res;
+      if (isEditMode) {
+        // 수정 모드일 때
+        res = await putMyRecord(Number(postId), {
+          ...formData,
+          gameId: selectedGameId,
+          existingImages: existingImages, // 서버에 유지할 이미지 경로
+          images: imageFiles, // 새로 추가된 파일들
+        });
+      } else {
+        // 작성 모드일 때
+        res = await postMyRecord({
+          ...formData,
+          gameId: selectedGameId,
+          userId: Number(user?.id),
+          images: imageFiles,
+        } as PostRequest);
+      }
+
+      if (res.status === 201 || res.status === 200) {
+        alert(
+          isEditMode ? "수정이 완료되었습니다." : "직관 기록이 완료되었습니다.",
+        );
+        navigate(`/post/${user?.id}/all`);
       }
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   };
 
@@ -121,6 +166,7 @@ export default function RecordWriteStep() {
             </div>
             <input
               type="text"
+              value={formData.title}
               placeholder="제목을 입력하세요"
               onChange={handleTitleChange}
               className="w-full p-4 bg-white border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-disabled transition-all text-lg"
@@ -141,6 +187,7 @@ export default function RecordWriteStep() {
             </div>
             <textarea
               placeholder="오늘 경기는 어땠나요? 상세한 후기를 남겨주세요."
+              value={formData.content}
               onChange={handleTextAreaChange}
               className="w-full min-h-72 p-5 bg-white border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-disabled transition-all text-lg"
             />
@@ -150,7 +197,7 @@ export default function RecordWriteStep() {
             type="submit"
             className="w-full py-4 bg-primary text-white font-bold text-xl rounded-xl hover:bg-hover transition-all shadow-lg active:scale-[0.98] cursor-pointer"
           >
-            저장하기
+            {isEditMode ? "수정 완료" : "저장하기"}
           </button>
 
           <button
@@ -171,40 +218,62 @@ export default function RecordWriteStep() {
               color="text-textMain"
               className="font-bold!"
             >
-              직관 사진 등록{" "}
+              직관 사진{" "}
               <span className="text-sm text-gray-400">
-                ({imageFiles.length}/4)
+                ({existingImages.length + imageFiles.length}/4)
               </span>
             </Typography>
           </div>
 
           <div className="border-2 border-dashed border-gray-300 rounded-2xl p-6 bg-gray-50/50 flex flex-col gap-4">
             <div className="grid grid-cols-2 gap-4 w-full">
-              {[0, 1, 2, 3].map((i) => (
+              {existingImages.map((img, i) => (
                 <div
-                  key={i}
-                  className="relative aspect-square w-full bg-gray-200 rounded-xl overflow-hidden border border-gray-100 flex items-center justify-center"
+                  key={`ex-${i}`}
+                  className="relative aspect-square bg-gray-200 rounded-xl overflow-hidden border"
                 >
-                  {previews[i] ? (
-                    <>
-                      <img
-                        src={previews[i]}
-                        className="w-full h-full object-cover"
-                        alt={`preview-${i}`}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeImage(i)}
-                        className="absolute top-1 right-1 text-white drop-shadow-md hover:text-red-500 transition-colors"
-                      >
-                        <IoCloseCircle size={24} />
-                      </button>
-                    </>
-                  ) : (
-                    <div className="flex flex-col items-center text-gray-400 gap-1">
-                      <Typography variant="body-sm">이미지 없음</Typography>
-                    </div>
-                  )}
+                  <img
+                    src={`${import.meta.env.VITE_IMAGE_BASE_URL}${img}`}
+                    className="w-full h-full object-cover"
+                    alt="existing"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeExistingImage(i)}
+                    className="absolute top-1 right-1 text-red-500 bg-white rounded-full shadow-md"
+                  >
+                    <IoCloseCircle size={24} />
+                  </button>
+                </div>
+              ))}
+              {previews.map((url, i) => (
+                <div
+                  key={`new-${i}`}
+                  className="relative aspect-square bg-gray-200 rounded-xl overflow-hidden border-2 border-primary"
+                >
+                  <img
+                    src={url}
+                    className="w-full h-full object-cover"
+                    alt="preview"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeNewImage(i)}
+                    className="absolute top-1 right-1 text-red-500 bg-white rounded-full shadow-md"
+                  >
+                    <IoCloseCircle size={24} />
+                  </button>
+                </div>
+              ))}
+              {/* 남은 슬롯 표시 (디자인용) */}
+              {Array.from({
+                length: 4 - (existingImages.length + imageFiles.length),
+              }).map((_, i) => (
+                <div
+                  key={`empty-${i}`}
+                  className="aspect-square bg-gray-100 rounded-xl border border-dashed border-gray-300 flex items-center justify-center text-gray-300 text-xs"
+                >
+                  IMAGE
                 </div>
               ))}
             </div>
