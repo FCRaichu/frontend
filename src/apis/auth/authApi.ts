@@ -48,6 +48,6 @@ export const postSingUp = async (data: SignUpRequest) => {
 
 // 닉네임 변경 로직
 export const patchNickname = async (nickname: string) => {
-  const res = await api.patch(`/api/users/nickname`, nickname);
+  const res = await api.patch(`/api/users/nickname`, { nickname: nickname });
   return res;
 };
