@@ -4,6 +4,7 @@ import Typography from "@/styles/common/Typography";
 import type { Post } from "@/types/post";
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import defaultImage from "@/assets/myseoul_logo.png";
 
 interface Props {
   posts: Post[];
@@ -111,11 +112,15 @@ export default function AllPostsImages({ posts, observer }: Props) {
               onClick={() =>
                 navigate(`/post/${user?.id}/detail/${post.postId}`)
               }
-              className="relative group cursor-pointer overflow-hidden bg-line shadow-sm"
+              className="relative group cursor-pointer overflow-hidden shadow-sm"
               style={{ marginTop: isFirstMonth ? "0" : "0" }}
             >
               <img
-                src={`${import.meta.env.VITE_IMAGE_BASE_URL}${post.thumbnail}`}
+                src={
+                  post.thumbnail === null
+                    ? defaultImage
+                    : `${import.meta.env.VITE_IMAGE_BASE_URL}${post.thumbnail}`
+                }
                 alt={post.title}
                 className="w-52 h-auto object-cover transition-transform duration-700 group-hover:scale-110"
               />

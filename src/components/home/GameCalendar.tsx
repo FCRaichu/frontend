@@ -279,7 +279,7 @@ export const GameCalendar = () => {
             if (matchEvent.extendedProps.isAttended) {
               return "attended-day-bg"; // 직관한 날 클래스
             }
-            return "match-day-bg"; // 경기일 클래스
+            return "match-day-bg "; // 경기일 클래스
           }
           const hasMatch = events.some((e) => e.start === dateStr);
           return hasMatch ? "match-day-bg" : "";
@@ -305,7 +305,7 @@ export const GameCalendar = () => {
                   isFuture || isAttended
                     ? "cursor-default"
                     : "cursor-pointer hover:scale-105"
-                }`}
+                } ${isFuture ? "opacity-80 grayscale" : "opacity-100"}`}
             >
               {opponentTeam ? (
                 <img
