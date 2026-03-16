@@ -121,7 +121,7 @@ export default function AllPostsImages({ posts, observer }: Props) {
               />
 
               <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center p-4">
-                <span className="text-white text-[10px] font-bold border border-white px-3 py-1 tracking-tighter">
+                <span className="text-white text-[10px] font-bold underline underline-white px-3 py-1 tracking-tighter">
                   VIEW DETAIL
                 </span>
                 <p className="text-white text-[10px] mt-2 font-medium opacity-80 truncate w-full text-center">
