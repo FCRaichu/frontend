@@ -4,6 +4,11 @@ export interface Player {
   image: string;
   position: string;
   backNumber: number;
+  userRank: {
+    additionalProp1: string;
+    additionalProp2: string;
+    additionalProp3: string;
+  };
 }
 
 export interface DonationRequest {

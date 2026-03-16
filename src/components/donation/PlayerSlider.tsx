@@ -75,14 +75,40 @@ export default function PlayerSlider() {
                 />
 
                 {/* 오버레이 텍스트 */}
-                <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
-                  <span className="text-primary font-black text-2xl mb-1 italic">
-                    NO.{player.backNumber}
-                  </span>
-                  <p className="text-white text-3xl font-black uppercase">
-                    {player.name}
-                  </p>
-                  <div className="h-1 w-0 group-hover:w-full bg-primary transition-all duration-500 mt-2"></div>
+                <div className="absolute inset-0 bg-linear-to-t from-black via-black/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity flex flex-row items-end justify-between p-6">
+                  <div className="flex flex-col">
+                    <span className="text-primary font-black text-xl mb-1 italic">
+                      NO.{player.backNumber}
+                    </span>
+                    <p className="text-white text-2xl font-black uppercase leading-tight">
+                      {player.name}
+                    </p>
+                    <div className="h-1 w-0 group-hover:w-full bg-primary transition-all duration-500 mt-2"></div>
+                  </div>
+
+                  {player.userRank &&
+                    Object.keys(player.userRank).length > 0 && (
+                      <div className="flex flex-col items-end gap-1 mb-1">
+                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">
+                          Top Supporters
+                        </p>
+                        {Object.entries(player.userRank)
+                          .slice(0, 3) // 최대 3위까지만
+                          .map(([rankKey, userName], index) => (
+                            <div
+                              key={rankKey}
+                              className="flex items-center gap-2 bg-black/40 px-2 py-1 rounded-sm border-l-2 border-primary"
+                            >
+                              <span className="text-primary font-black text-xs italic">
+                                {index + 1}ST
+                              </span>
+                              <span className="text-white text-xs font-medium truncate max-w-20">
+                                {userName !== "null" ? userName : "___"}
+                              </span>
+                            </div>
+                          ))}
+                      </div>
+                    )}
                 </div>
               </div>
             </SwiperSlide>
