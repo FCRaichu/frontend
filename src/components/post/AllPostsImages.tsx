@@ -77,6 +77,7 @@ export default function AllPostsImages({ posts, observer }: Props) {
         const date = new Date(post.createdAt);
         const currentMonth = date.getMonth();
         const currentYear = date.getFullYear().toString();
+        const isDefault = post.thumbnail === null;
 
         // 이전 포스트와 비교해서 '월'이 바뀌었는지 확인한다. (첫 번째 포스트도)
         const isFirstMonth =
@@ -112,7 +113,9 @@ export default function AllPostsImages({ posts, observer }: Props) {
               onClick={() =>
                 navigate(`/post/${user?.id}/detail/${post.postId}`)
               }
-              className="relative group cursor-pointer overflow-hidden shadow-sm"
+              className={`relative group cursor-pointer overflow-hidden shadow-sm transition-colors ${
+                isDefault ? "py-16 grayscale opacity-50 shadow-lg" : ""
+              }`}
               style={{ marginTop: isFirstMonth ? "0" : "0" }}
             >
               <img
@@ -122,7 +125,7 @@ export default function AllPostsImages({ posts, observer }: Props) {
                     : `${import.meta.env.VITE_IMAGE_BASE_URL}${post.thumbnail}`
                 }
                 alt={post.title}
-                className="w-52 h-auto object-cover transition-transform duration-700 group-hover:scale-110"
+                className={`w-52 h-auto transition-transform duration-700 group-hover:scale-110`}
               />
 
               <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center p-4">
