@@ -17,5 +17,5 @@ export interface PostRequest {
   userId: number;
   title: string;
   content: string;
-  images: String[]; // 나중에 file로 바꾸기
+  images: File[]; // 나중에 file로 바꾸기
 }

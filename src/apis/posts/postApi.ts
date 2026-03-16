@@ -9,7 +9,22 @@ export const getMyAllRecords = async () => {
 
 // 직관 기록 작성
 export const postMyRecord = async (data: PostRequest) => {
-  const res = await api.post(`/api/posts`, data);
+  const formData = new FormData();
+
+  formData.append("gameId", String(data.gameId));
+  formData.append("userId", String(data.userId));
+  formData.append("title", data.title);
+  formData.append("content", data.content);
+
+  data.images.forEach((file) => {
+    formData.append("images", file);
+  });
+
+  const res = await api.post(`/api/posts`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return res;
 };
 
