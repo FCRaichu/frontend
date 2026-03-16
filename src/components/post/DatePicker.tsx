@@ -26,11 +26,25 @@ export default function DatePicker({ value, onChange }: Props) {
       try {
         const res = await getAllGames();
         if (res.status === 200) {
-          setGames(res.data);
+          // DONE: 오늘 경기를 기준으로 이전 경기만 보여주기
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+
+          const filteredAndSorted = res.data
+            .filter((game: Game) => {
+              const gameDate = new Date(game.date);
+              return gameDate <= today; // 오늘을 포함해서 이전 날짜만 필터링함.
+            })
+            .sort((a: Game, b: Game) => {
+              // 최신순으로 정렬함
+              return new Date(b.date).getTime() - new Date(a.date).getTime();
+            });
+
+          setGames(filteredAndSorted);
 
           // 초기값이 없을 때 첫 번째 경기를 기본값으로 설정.
-          if (res.data.length > 0 && !value) {
-            onChange(res.data[0].id);
+          if (filteredAndSorted.length > 0 && !value) {
+            onChange(filteredAndSorted[0].id);
           }
         }
       } catch (e) {
