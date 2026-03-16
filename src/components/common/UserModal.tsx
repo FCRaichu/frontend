@@ -54,6 +54,7 @@ export const UserModal = ({ user, setIsModalOpen }: Props) => {
               logout();
               setIsModalOpen(false);
               alert("로그아웃 되었습니다.");
+              window.location.replace("/"); // 새로고침해서 데이터 다시 페칭하게끔 (그래야 로그인 필요한 서비스인지 아닌지 알 수 있음.)
             }}
             className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-red-50 transition-colors cursor-pointer"
           >

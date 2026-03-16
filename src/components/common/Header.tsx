@@ -1,19 +1,16 @@
 import { useAuthStore } from "@/stores/useAuthStore";
-import {
-  Link,
-  NavLink,
-  useLocation,
-  type NavLinkRenderProps,
-} from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import fcseoul_logo from "@/assets/fcseoul_logo.png";
 import { useEffect, useRef, useState } from "react";
 import { UserModal } from "./UserModal";
+import { LuMenu, LuX } from "react-icons/lu";
 
 export default function Header() {
   // 전역 store에서 user 가져오기 (콕 찝어서 가져와야 다른 상태가 바뀌었을 때 리렌더링 안 됨.)
   const { user } = useAuthStore();
   const location = useLocation();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // 모바일 메뉴 상태
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -29,14 +26,21 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // 페이지 이동 시 모바일 메뉴 닫기
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  // 페이지에 따라 배경색 바꿀 때 필요한 코드
   const isSpecialPage =
     location.pathname === "/signup" || location.pathname === "/donation";
 
   const headerBg = isSpecialPage ? "bg-secondary" : "bg-background";
   const headerBorder = isSpecialPage ? "border-secondary" : "border-border";
 
-  const navItemStyle = ({ isActive }: NavLinkRenderProps) =>
-    `text-h4 transition-colors font-bold ${
+  // 활성화 상태를 결정하는 함수
+  const getNavItemStyle = (isActive: boolean) =>
+    `text-h4 md:text-body-md transition-colors font-bold ${
       isActive
         ? "text-primary" // 내가 위치해 있는 nav라면
         : !isSpecialPage // 내가 위치해 있는 헤더가 아닌데~~~
@@ -48,56 +52,108 @@ export default function Header() {
     <header
       className={`w-full border-b ${headerBorder} ${headerBg} sticky top-0 z-100`}
     >
-      <nav className="flex flex-row items-center justify-between w-full h-15 px-10 mx-auto">
-        <div className="flex items-center gap-10">
+      <nav className="flex flex-row items-center justify-between w-full h-16 px-4 md:px-10 mx-auto">
+        <div className="flex items-center gap-4 md:gap-10">
+          {/* 모바일 햄버거 버튼 */}
+          <button
+            className="block md:hidden text-2xl"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? (
+              <LuX />
+            ) : (
+              <LuMenu className={isSpecialPage ? "text-white" : "text-black"} />
+            )}
+          </button>
+
           <Link to="/" className="flex items-center">
-            <img src={fcseoul_logo} alt="fcseoul_logo" className="h-8 w-auto" />
+            <img
+              src={fcseoul_logo}
+              alt="fcseoul_logo"
+              className="h-6 md:h-8 w-auto"
+            />
           </Link>
 
-          <ul className="flex items-center gap-8">
+          {/* 데스크탑 메뉴 & 모바일 드롭다운 메뉴 */}
+          <ul
+            className={`
+            fixed md:static top-16 left-0 w-full md:w-auto 
+            flex flex-col md:flex-row items-center gap-6 md:gap-8 
+            p-8 md:p-0 transition-all duration-300
+            ${headerBg} ${isMobileMenuOpen ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 md:translate-y-0 md:opacity-100"}
+            border-b md:border-none ${headerBorder} z-[-1] md:z-auto
+          `}
+          >
             <li>
               <NavLink
                 to="/"
-                className={`${navItemStyle} italic text-primary text-xl`}
+                className={`italic text-primary text-lg md:text-xl font-black`}
               >
                 MY FC SEOUL
               </NavLink>
             </li>
             <li>
-              <NavLink to="/post" end className={navItemStyle}>
+              <NavLink
+                to="/post"
+                className={() =>
+                  // /post 이거나 /post/new 일 때 활성화
+                  getNavItemStyle(
+                    location.pathname === "/post" ||
+                      location.pathname === "/post/new",
+                  )
+                }
+              >
                 직관 기록하기
               </NavLink>
             </li>
             <li>
-              <NavLink to={`/post/${user?.id}/all`} className={navItemStyle}>
+              <NavLink
+                to={`/post/${user?.id}/all`}
+                className={() =>
+                  // /post/:id/all 이거나 /post/:id/detail 이 포함될 때 활성화
+                  getNavItemStyle(
+                    location.pathname.includes(`/post/${user?.id}/all`) ||
+                      location.pathname.includes(`/post/${user?.id}/detail`),
+                  )
+                }
+              >
                 나의 직관 기록
               </NavLink>
             </li>
-            <li>
-              <NavLink to="/donation" className={navItemStyle}>
+            <li className="md:hidden lg:block">
+              {" "}
+              {/* 공간 부족 시 태블릿에서 숨김 가능 */}
+              <NavLink
+                to="/donation"
+                className={({ isActive }) => getNavItemStyle(isActive)}
+              >
                 Donation
               </NavLink>
             </li>
           </ul>
         </div>
 
-        <div className="flex items-center gap-5 text-body-md">
+        {/* 우측 유저 섹션 */}
+        <div
+          className="flex items-center gap-3 md:gap-5 text-body-sm md:text-body-md"
+          ref={modalRef}
+        >
           {user ? (
-            <div className="flex items-center gap-2 text-textSub">
-              <span className="text-body-sm">환영합니다,</span>
+            <div className="flex items-center gap-1 md:gap-2 text-textSub relative">
+              <span className="hidden sm:inline">환영합니다,</span>
               <button
-                className="text-button-md text-primary cursor-pointer"
+                className="text-button-sm md:text-button-md text-primary cursor-pointer font-bold"
                 onClick={() => setIsModalOpen(!isModalOpen)}
               >
                 {user.nickname}
               </button>
-              <button className="text-body-sm">님</button>
+              <button className="">님</button>
               {isModalOpen && (
                 <UserModal user={user} setIsModalOpen={setIsModalOpen} />
               )}
             </div>
           ) : (
-            <div className="flex items-center gap-4 text-textSub">
+            <div className="flex items-center gap-2 md:gap-4 text-textSub">
               <Link
                 to="/login"
                 className="hover:text-textMain transition-colors"
@@ -107,7 +163,7 @@ export default function Header() {
               <div className="w-px h-3 bg-border" />
               <Link
                 to="/signup"
-                className="text-button-md text-primary hover:text-hover transition-colors"
+                className="text-primary hover:text-hover transition-colors font-bold"
               >
                 Join Us
               </Link>

@@ -47,59 +47,37 @@ export const Ranking = () => {
     const isMe = item.nickname === myNickname;
     const isAttendance = type === "attendance";
 
-    // 타입별 포인트 컬러 설정
-    const activeBg = isAttendance
-      ? "bg-primary shadow-[0_20px_40px_rgba(217,25,32,0.2)]"
-      : "bg-secondary shadow-[0_20px_40px_rgba(26,26,27,0.3)]";
-    const rankColor = isAttendance ? "text-primary" : "text-secondary/30";
+    const pointColor = isAttendance ? "border-primary" : "border-secondary";
+    const rankTextColor = isAttendance ? "text-primary" : "text-secondary/40";
 
     return (
       <div
         className={`group relative flex items-center p-1 rounded-xl transition-all duration-300 ${
           isMe
-            ? `${activeBg} scale-[1.03] z-10`
-            : "bg-white border border-line hover:border-secondary shadow-sm hover:shadow-xl"
+            ? `bg-white border-2 ${pointColor} shadow-lg z-10 scale-[1.01]`
+            : "bg-white border border-line hover:border-gray-400 shadow-sm"
         }`}
       >
-        <span
-          className={`absolute right-8 text-5xl font-black italic opacity-[0.04] group-hover:opacity-10 transition-opacity ${isMe ? "text-white" : "text-secondary"}`}
-        >
-          {item.rank}
-        </span>
-
-        <div
-          className={`flex items-center w-full py-3 px-5 rounded-lg ${isMe ? (isAttendance ? "bg-primary" : "bg-secondary") : "bg-white"}`}
-        >
-          <span
-            className={`w-12 text-2xl font-black italic ${isMe ? "text-white" : rankColor}`}
-          >
+        <div className="flex items-center w-full py-3 px-5 rounded-lg bg-white">
+          {/* 순위 번호 */}
+          <span className={`w-12 text-2xl font-black italic ${rankTextColor}`}>
             {item.rank}
           </span>
 
+          {/* 닉네임 영역 */}
           <div className="flex-1">
-            <p
-              className={`text-lg font-bold ${isMe ? "text-white" : "text-secondary"}`}
-            >
+            <p className="text-lg font-bold text-secondary flex items-center">
               {item.nickname}
-              {isMe && (
-                <span
-                  className={`ml-2 text-[10px] px-1.5 py-0.5 rounded font-black italic ${isAttendance ? "bg-white text-primary" : "bg-primary text-white"}`}
-                >
-                  YOU
-                </span>
-              )}
             </p>
           </div>
 
           <div className="text-right">
             <span
-              className={`text-2xl font-black ${isMe ? "text-white" : "text-primary"}`}
+              className={`text-2xl font-black ${isAttendance ? "text-primary" : "text-secondary"}`}
             >
               {item.count || item.winRate}
             </span>
-            <span
-              className={`text-xs ml-1 font-bold ${isMe ? "text-white/80" : "text-textSub"}`}
-            >
+            <span className="text-xs ml-1 font-bold text-textSub">
               {isAttendance ? "회" : "%"}
             </span>
           </div>
@@ -136,9 +114,6 @@ export const Ranking = () => {
             <Typography variant="h1" color="text-textMain" className="italic">
               ATTENDANCE
             </Typography>
-            <span className="bg-secondary text-white text-[10px] px-2 py-1 rounded font-bold uppercase tracking-widest">
-              KING
-            </span>
           </div>
           <div className="flex flex-col gap-4">
             {rankingData.attendanceRank.length > 0 ? (
@@ -161,9 +136,6 @@ export const Ranking = () => {
             <Typography variant="h1" color="text-textMain" className="italic">
               WIN RATE
             </Typography>
-            <span className="bg-primary text-white text-[10px] px-2 py-1 rounded font-bold uppercase tracking-widest">
-              KING
-            </span>
           </div>
           <div className="flex flex-col gap-4">
             {rankingData.winRateRank.length > 0 ? (
