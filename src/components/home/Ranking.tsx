@@ -25,10 +25,14 @@ export const Ranking = () => {
           getAttendanceRanking(),
           getWinRateRanking(),
         ]);
-        setRankingData({
-          attendanceRank: attendanceRes.data,
-          winRateRank: winRateRes.data,
-        });
+
+        if (attendanceRes.status == 200 && winRateRes.status == 200) {
+          console.log(attendanceRes, winRateRes);
+          setRankingData({
+            attendanceRank: attendanceRes.data,
+            winRateRank: winRateRes.data,
+          });
+        }
       } catch (e) {
         console.log(e);
       }

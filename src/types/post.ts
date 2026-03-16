@@ -7,6 +7,7 @@ export interface Post {
   title: string;
   content: string;
   images: string[];
+  thumbnail: string;
   createdAt: string;
   game?: Game;
 }

@@ -115,7 +115,7 @@ export default function AllPostsImages({ posts, observer }: Props) {
               style={{ marginTop: isFirstMonth ? "0" : "0" }}
             >
               <img
-                src={post.images?.[0]}
+                src={`${import.meta.env.VITE_IMAGE_BASE_URL}${post.thumbnail}`}
                 alt={post.title}
                 className="w-52 h-auto object-cover transition-transform duration-700 group-hover:scale-110"
               />

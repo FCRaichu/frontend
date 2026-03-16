@@ -1,6 +1,6 @@
 // src/pages/DetailPostPage.tsx
 import { getGameById } from "@/apis/games/gameApi";
-import { getRecordById } from "@/apis/posts/postApi";
+import { deleteMyRecord, getRecordById } from "@/apis/posts/postApi";
 import ImageSlider from "@/components/postDetail/ImageSlider";
 import MatchInfo from "@/components/postDetail/MatchInfo";
 import Typography from "@/styles/common/Typography";
@@ -10,9 +10,14 @@ import { formatDate } from "@/utils/formatDate";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"; // react-router-dom 사용 시
 
+import { FiEdit } from "react-icons/fi";
+import { MdOutlineDeleteForever } from "react-icons/md";
+import { useAuthStore } from "@/stores/useAuthStore";
+
 export default function PostDetail() {
   const navigate = useNavigate();
-  const id = useParams().userId;
+  const { user } = useAuthStore();
+  const { userId, postId } = useParams();
 
   const [postData, setPostData] = useState<Post>();
   const [gameData, setGameData] = useState<Game>();
@@ -21,11 +26,11 @@ export default function PostDetail() {
   useEffect(() => {
     const fetchPostDetail = async () => {
       try {
-        const postRes = await getRecordById(Number(id));
+        const postRes = await getRecordById(Number(postId));
         if (postRes.status === 200) {
-          const gameRep = await getGameById(postRes.data.gameId);
-          if (gameRep.status === 200) {
-            setGameData(gameRep.data);
+          const gameRes = await getGameById(postRes.data.gameId);
+          if (gameRes.status === 200) {
+            setGameData(gameRes.data);
             setPostData(postRes.data);
           }
         }
@@ -35,7 +40,27 @@ export default function PostDetail() {
     };
 
     fetchPostDetail();
-  }, []);
+  }, [userId]);
+
+  // 삭제
+  const handleDelete = async () => {
+    if (!window.confirm("정말로 이 게시물을 삭제하시겠습니까?")) return;
+
+    try {
+      const res = await deleteMyRecord(Number(postId));
+      if (res.status === 204) {
+        alert("삭제되었습니다.");
+        navigate(-1);
+      }
+    } catch (e) {
+      console.error("삭제 실패:", e);
+    }
+  };
+
+  // 수정
+  const handleEdit = () => {
+    navigate(`/post/edit/${postId}`, { state: { postData } });
+  };
 
   return (
     // 헤더만큼 빼고 높이 설정을 해야 전체 스크롤이 안 생긴다. 왼쪽만 스크롤 있고 사진 영역은 스크롤 없도록.
@@ -75,13 +100,32 @@ export default function PostDetail() {
         </div>
 
         {/* 이전으로 버튼도 고정!! */}
-        <button
-          onClick={() => navigate(-1)}
-          className="shrink-0 flex items-center mt-8 gap-2 
-          text-disabledGray hover:text-secondary transition-colors font-bold text-lg cursor-pointer"
-        >
-          <span className="text-xl">←</span> 이전으로
-        </button>
+        <div className="shrink-0 flex items-center justify-between mt-8 border-t border-border pt-6">
+          {/* 왼쪽: 이전으로 */}
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 text-disabledGray hover:text-secondary transition-colors font-bold text-lg cursor-pointer"
+          >
+            <span className="text-xl">←</span> 이전으로
+          </button>
+
+          {user?.id === Number(userId) && (
+            <div className="flex items-center gap-6">
+              <button
+                onClick={handleEdit}
+                className="text-disabledGray hover:text-primary transition-colors font-bold text-lg cursor-pointer"
+              >
+                <FiEdit className="font-bold" />
+              </button>
+              <button
+                onClick={handleDelete}
+                className="text-disabledGray hover:text-primary transition-colors font-bold text-lg cursor-pointer"
+              >
+                <MdOutlineDeleteForever className="text-2xl" />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
       {postData && (
         <div className="w-1/2 h-full overflow-hidden">
