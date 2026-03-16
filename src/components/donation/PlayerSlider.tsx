@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, FreeMode, Mousewheel } from "swiper/modules";
+import { Autoplay } from "swiper/modules";
 import type { Player } from "@/types/donation";
 import SupportModal from "./SupportModal";
 
@@ -38,7 +38,7 @@ export default function PlayerSlider() {
     <div className="w-full py-10">
       <style>{swiperStyle}</style>
       <Swiper
-        modules={[Autoplay, FreeMode, Mousewheel]}
+        modules={[Autoplay]}
         slidesPerView={1.5}
         breakpoints={{
           640: { slidesPerView: 2.5 },
@@ -52,10 +52,6 @@ export default function PlayerSlider() {
         autoplay={{
           delay: 0,
           disableOnInteraction: false,
-        }}
-        mousewheel={{
-          forceToAxis: true, // 가로 스크롤만 허용
-          sensitivity: 2, // 감도 조절
         }}
         className="continuous-swiper"
       >

@@ -9,6 +9,7 @@ interface AuthState {
   accessToken: string | null; // JWT 액세스 토큰
   isLoggedIn: () => boolean; // 로그인 여부 확인
   setAuth: (data: AuthResponse) => void; // 로그인 성공 시 호출
+  updateUser: (userInfo: Partial<User>) => void;
   logout: () => void; // 로그아웃 시 호출
 }
 
@@ -22,8 +23,6 @@ export const useAuthStore = create<AuthState>()(
       accessToken: null,
       tokenType: null,
 
-      isLoggedIn: () => !!get().accessToken, // 로그인 여부 확인
-
       //   상태 변경 함수
       // 로그인: 서버에서 받은 응답(data)을 스토어에 저장
       setAuth: (data: AuthResponse) => {
@@ -34,12 +33,23 @@ export const useAuthStore = create<AuthState>()(
             nickname: data.user.nickname,
             role: data.user.role,
             points: data.user.points,
-            seasonTicket: data.user.seasonTicket,
+            checkPoint: data.user.checkPoint,
           },
           accessToken: data.accessToken,
           tokenType: data.grantType,
         });
       },
+
+      updateUser: (userInfo: Partial<User>) => {
+        const currentUser = get().user;
+        if (currentUser) {
+          set({
+            user: { ...currentUser, ...userInfo },
+          });
+        }
+      },
+
+      isLoggedIn: () => !!get().accessToken, // 로그인 여부 확인
 
       // 로그아웃: 모든 인증 정보를 초기화
       logout: () =>
