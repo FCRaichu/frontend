@@ -21,7 +21,7 @@ export default function RootLayout() {
 
   return (
     <div
-      className={`flex flex-col min-h-screen gap-${isPostPath ? "0" : "16"} bg-${backColor}`}
+      className={`flex flex-col min-h-screen gap-${isPostPath || location.pathname === "/donation" ? "0" : "16"} bg-${backColor}`}
     >
       {/* DONE: 로그인 경로에서 헤더 없애기 */}
       {location.pathname !== "/login" && <Header />}

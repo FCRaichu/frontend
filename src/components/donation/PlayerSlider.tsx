@@ -5,8 +5,7 @@ import type { Player } from "@/types/donation";
 import SupportModal from "./SupportModal";
 
 // Swiper 필수 스타일
-import "swiper/css";
-import "swiper/css/free-mode";
+import "swiper/swiper-bundle.css";
 
 // 컨베이어 벨트처럼 흐르게 만드는 CSS
 const swiperStyle = `
@@ -96,7 +95,7 @@ export default function PlayerSlider() {
           <SwiperSlide key={player.id}>
             <div
               onClick={() => setSelectedPlayer(player)}
-              className="relative aspect-[3/4] cursor-pointer overflow-hidden group border border-gray-800"
+              className="relative aspect-3/4 cursor-pointer overflow-hidden group border border-gray-800"
             >
               {/* 이미지 */}
               <img
@@ -106,14 +105,14 @@ export default function PlayerSlider() {
               />
 
               {/* 오버레이 텍스트 */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
-                <span className="text-orange-500 font-black text-2xl mb-1 italic">
+              <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
+                <span className="text-primary font-black text-2xl mb-1 italic">
                   NO.{player.backNumber}
                 </span>
                 <p className="text-white text-3xl font-black uppercase">
                   {player.name}
                 </p>
-                <div className="h-1 w-0 group-hover:w-full bg-orange-500 transition-all duration-500 mt-2"></div>
+                <div className="h-1 w-0 group-hover:w-full bg-primary transition-all duration-500 mt-2"></div>
               </div>
             </div>
           </SwiperSlide>
