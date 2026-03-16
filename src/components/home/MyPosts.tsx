@@ -118,10 +118,10 @@ export const MyRecords = () => {
                     <span>{record.game?.opponent || "상대팀 정보 없음"}</span>
                   </Typography>
                 </div>
-                {record.images?.[0] && (
+                {record.thumbnail && (
                   <div className="w-72 h-72 overflow-hidden rounded-xl">
                     <img
-                      src={record.images[0]}
+                      src={`${import.meta.env.VITE_IMAGE_BASE_URL}${record.thumbnail}`}
                       alt="직관 이미지"
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
