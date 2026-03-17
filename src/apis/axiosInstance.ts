@@ -1,15 +1,15 @@
 import { useAuthStore } from "@/stores/useAuthStore";
 import axios from "axios";
 
-// [axios 기본 세팅!] 모든 파일에서 똑같은 규칙을 공유할 수 있도록.
+// 모든 파일에서 똑같은 규칙을 공유할 수 있도록.
 export const api = axios.create({
-  // TODO: 배포 환경에서 잘 작동하는지 확인
+  // DONE: 배포 환경에서 잘 작동하는지 확인
   // (npm run dev 에서는 자동으로 .env.development 로 연결됨)
   baseURL: import.meta.env.VITE_API_URL, // .env에서 설정한 주소 사용
   timeout: 5000, // 응답 대기 5초
 });
 
-// [보내는 요청 인터셉트!] 서버로 요청을 "보내기" 전에 인터셉트!
+// 서버로 요청을 "보내기" 전에 인터셉트!
 api.interceptors.request.use(
   (config) => {
     // zustand 스토어에 저장되어 있는 최신 토큰을 가져옴.
@@ -69,11 +69,26 @@ api.interceptors.response.use(
       } catch (refreshError) {
         // 리프레시 토큰까지 만료된 경우 (진짜 로그아웃)
         useAuthStore.getState().logout();
-        alert("로그인이 필요한 서비스입니다.");
+        alert("세션이 만료되었습니다. 다시 로그인해주세요.");
         window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }
+
+    // 에러나 리프레시 실패 시 서버 메시지 띄워주기
+    if (error.response) {
+      // 서버가 준 에러 메시지가 있으면 그걸 보여주고, 없으면 기본 메시지
+      const serverMessage =
+        error.response.data?.message || error.response.data?.error_description;
+
+      // 로그인이 필요한 경우인데 리프레시조차 안 된 상태일 때 등
+      if (error.response.status === 400 || error.response.status === 403) {
+        alert(serverMessage || "요청이 거절되었습니다.");
+      } else if (error.response.status >= 500) {
+        alert("서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      }
+    }
+
     return Promise.reject(error);
   },
 );
