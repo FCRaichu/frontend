@@ -103,7 +103,7 @@ export const Ranking = () => {
           TOP FIELD
         </h1>
         <h2 className="relative text-6xl font-black text-secondary leading-tight">
-          명예의 전당 <span className="text-primary">.</span>
+          2026 명예의 전당 <span className="text-primary">.</span>
         </h2>
       </div>
 
