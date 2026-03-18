@@ -3,6 +3,9 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./routes.tsx";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { queryClient } from "./QueryClient.ts";
 
 // MSW 활성화 함수 정의
 async function enableMocking() {
@@ -23,8 +26,12 @@ async function enableMocking() {
 enableMocking().then(() => {
   createRoot(document.getElementById("root")!).render(
     <StrictMode>
-      {/* APP 대신 RouterProvider 넣어줘야 한다. */}
-      <RouterProvider router={router} />
+      <QueryClientProvider client={queryClient}>
+        {/* 쿼리 성능 테스트 */}
+        <ReactQueryDevtools initialIsOpen={false} />
+        {/* APP 대신 RouterProvider 넣어줘야 한다. */}
+        <RouterProvider router={router} />
+      </QueryClientProvider>
     </StrictMode>,
   );
 });

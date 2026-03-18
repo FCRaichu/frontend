@@ -1,5 +1,5 @@
 import { getAllGames } from "@/apis/games/gameApi";
-import { getMyAllRecords } from "@/apis/posts/postApi";
+import { getMyAllPosts } from "@/apis/posts/postApi";
 import Typography from "@/styles/common/Typography";
 import { formatDate } from "@/utils/formatDate";
 import { useEffect, useState } from "react";
@@ -35,53 +35,53 @@ export default function DatePicker({
         // 전체 경기와 내가 쓴 기록을 병렬로 호출해서 내가 이미 작성한 포스트라면? 경기 일자를 빼버리기
         const [gameRes, postRes] = await Promise.all([
           getAllGames(),
-          getMyAllRecords(), // 내가 이미 작성한 포스트 목록 가져오기
+          getMyAllPosts(), // 내가 이미 작성한 포스트 목록 가져오기
         ]);
+        const today = new Date();
+        today.setHours(23, 59, 59, 999);
 
-        if (gameRes.status === 200) {
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
+        // 이미 기록이 있는 경기 ID들 추출
+        const writtenGameIds =
+          postRes?.posts?.map((post: any) => post.gameId) || [];
 
-          // 이미 기록이 있는 경기 ID들 추출
-          const writtenGameIds = postRes.data.posts.map(
-            (post: any) => post.gameId,
-          );
+        const filteredAndSorted = (gameRes || [])
+          .filter((game: Game) => {
+            const gameDate = new Date(game.date);
+            // DONE: 오늘 경기를 기준으로 이전 경기만 보여주기
+            const isPastOrToday = gameDate <= today;
 
-          const filteredAndSorted = gameRes.data
-            .filter((game: Game) => {
-              const gameDate = new Date(game.date);
-              // DONE: 오늘 경기를 기준으로 이전 경기만 보여주기
-              const isPastOrToday = gameDate <= today;
+            // 내가 이미 썼던 경기(writtenGameIds)는 제외하기
+            // 이미 썼던 경기이지만 수정 모드라면 목록에 포함시킨다.
+            const isNotWritten = !writtenGameIds.includes(game.id);
 
-              // 내가 이미 썼던 경기(writtenGameIds)는 제외하기
-              // 이미 썼던 경기이지만 수정 모드라면 목록에 포함시킨다.
-              const isNotWritten = !writtenGameIds.includes(game.id);
-              const isOriginalGameInEditMode =
-                isEditMode && game.id === initialGameId;
+            const isCurrentValue = value && Number(game.id) === Number(value);
 
-              return (
-                isPastOrToday && (isNotWritten || isOriginalGameInEditMode)
-              );
-            })
-            .sort((a: Game, b: Game) => {
-              // 최신순으로 정렬함
-              return new Date(b.date).getTime() - new Date(a.date).getTime();
-            });
+            const isOriginalGameInEditMode =
+              isEditMode && game.id === initialGameId;
 
-          setGames(filteredAndSorted);
+            return (
+              isPastOrToday &&
+              (isNotWritten || isOriginalGameInEditMode || isCurrentValue)
+            );
+          })
+          .sort((a: Game, b: Game) => {
+            // 최신순으로 정렬함
+            return new Date(b.date).getTime() - new Date(a.date).getTime();
+          });
 
-          // 초기값이 없을 때 첫 번째 경기를 기본값으로 설정.
-          if (filteredAndSorted.length > 0 && !value) {
-            onChange(filteredAndSorted[0].id);
-          }
+        setGames(filteredAndSorted);
+
+        // 초기값이 없을 때 첫 번째 경기를 기본값으로 설정.
+        if (filteredAndSorted.length > 0 && !value) {
+          onChange(filteredAndSorted[0].id);
         }
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
     };
 
     fetchGamesAndRecords();
-  }, []);
+  }, [value, isEditMode, initialGameId]);
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const seletedId = Number(e.target.value);
@@ -126,7 +126,7 @@ export default function DatePicker({
 
           {/* 투명한 select는 덮어주기 */}
           <select
-            value={value}
+            value={value || ""}
             onChange={handleSelectChange}
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           >

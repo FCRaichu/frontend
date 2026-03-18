@@ -30,7 +30,7 @@ export default function SignUp() {
         navigate("/login");
       }
     } catch (error) {
-      console.log("회원가입 실패: ", error);
+      console.error("회원가입 실패: ", error);
     }
   };
 
@@ -48,7 +48,7 @@ export default function SignUp() {
           회원 가입
         </Typography>
         <Typography variant="h4" color="text-disabledGray">
-          FC라이츄 회원가입
+          My FC Seoul 회원가입
         </Typography>
       </div>
 
