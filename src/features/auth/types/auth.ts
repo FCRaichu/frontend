@@ -13,8 +13,9 @@ export interface LoginRequest {
 
 // 로그인 한 유저가 가지고 있을 상태
 export interface User {
-  id: number;
-  userId: string;
+  id: number; // string으로
+  userId: string; // 필요 없고
+  // email 추가 string
   nickname: string;
   role: "USER" | "ADMIN";
   points: number;
