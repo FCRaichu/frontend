@@ -72,7 +72,9 @@ export default function AllPostsImages({
       {sortedKeys.map((key) => {
         const [year, month] = key.split("-");
         const monthIndex = parseInt(month) - 1;
-        const currentMonthPosts = groupedPosts[key];
+        const currentMonthPosts = [...groupedPosts[key]].sort((a, b) => {
+          return new Date(b.gameDate).getTime() - new Date(a.gameDate).getTime();
+        });
 
         return currentMonthPosts.map((post, index) => {
           // 해당 월의 "첫 번째 포스트"인 경우에만 레이블과 Observer 감지용 Ref를 부여
