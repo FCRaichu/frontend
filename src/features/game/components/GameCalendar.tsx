@@ -315,24 +315,16 @@ export const GameCalendar = () => {
           );
         }}
         eventClick={(info) => {
-          // DONE: 오늘 날짜 이후는 클릭 방지
-          const eventDate = new Date(info.event.startStr);
-          const today = new Date();
-          const isAttended = info.event.extendedProps.isAttended;
-
-          today.setHours(0, 0, 0, 0);
-          eventDate.setHours(0, 0, 0, 0);
-
-          if (eventDate > today) {
-            alert("미래 경기는 아직 기록할 수 없습니다.");
+          const gameData = info.event.extendedProps;
+          
+          // 경기 결과가 입력되지 않은 경우 기록할 수 없음.
+          if (!gameData.result) {
+            alert("경기 결과가 등록된 후 기록할 수 있습니다.");
             return;
           }
 
-          // 이미 기록한 경기면 선택도 못하게 해.
-          if (isAttended) {
-            return;
-          }
-          // DONE: 클릭된 경기 id를 가지고 페이지 이동
+          if (gameData.isAttended) return;
+
           navigate("/post", { state: { gameId: info.event.id } });
         }}
       />

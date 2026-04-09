@@ -11,6 +11,7 @@ interface Game {
   date: string;
   opponent: string;
   stadium: string;
+  result?: string;
 }
 
 interface Props {
@@ -51,6 +52,9 @@ export default function DatePicker({
             // DONE: 오늘 경기를 기준으로 이전 경기만 보여주기
             const isPastOrToday = gameDate <= today;
 
+            // result(win/draw/lose)가 null이거나 빈 문자열인 경우는 제외하기.
+            const hasResult = game.result !== null && game.result !== undefined && game.result !== "";
+
             // 내가 이미 썼던 경기(writtenGameIds)는 제외하기
             // 이미 썼던 경기이지만 수정 모드라면 목록에 포함시킨다.
             const isNotWritten = !writtenGameIds.includes(game.id);
@@ -62,6 +66,7 @@ export default function DatePicker({
 
             return (
               isPastOrToday &&
+              hasResult &&
               (isNotWritten || isOriginalGameInEditMode || isCurrentValue)
             );
           })
