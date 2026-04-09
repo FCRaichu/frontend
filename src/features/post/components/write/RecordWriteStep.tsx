@@ -214,7 +214,7 @@ export default function RecordWriteStep() {
 
       // 캐시 날리고 최신 데이터 불러오기
       await queryClient.invalidateQueries({ queryKey: ["myPosts"] });
-      await queryClient.invalidateQueries({ queryKey: ["allPosts", user?.id] });
+      await queryClient.invalidateQueries({ queryKey: ["userPosts", user?.id] });
       await queryClient.invalidateQueries({ queryKey: ["post", postId] });
 
       alert(
