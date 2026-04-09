@@ -6,7 +6,7 @@
 
 // 뷰포트 상단에 월별 첫 사진이 걸릴 때 연도 업데이트.
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
@@ -42,6 +42,7 @@ export const AllPosts = () => {
   const visibleElements = useRef(new Map<Element, string>()); // 하나의 줄에 있는 연도 담기
 
   useEffect(() => {
+    // 관찰자 인스턴스 생성
     observer.current = new IntersectionObserver(
       (entries) => {
         let hasChanges = false;
@@ -76,13 +77,20 @@ export const AllPosts = () => {
         }
       },
       {
-        rootMargin: "20% 0px -70% 0px",
+        rootMargin: "-70% 0px -80% 0px",
         threshold: 0,
       },
     );
     return () => {
       observer.current?.disconnect();
     };
+  }, []);
+
+  // 
+  const observeElement = useCallback((el: HTMLElement | null) => {
+    if (el && observer.current) {
+      observer.current.observe(el);
+    }
   }, []);
 
   // 받아온 데이터를 연도-월 이런 식으로 그룹화
@@ -220,7 +228,7 @@ export const AllPosts = () => {
             <AllPostsImages
               groupedPosts={groupedPosts}
               sortedKeys={sortedKeys}
-              observer={observer.current}
+              observer={observeElement}
             />
           ) : (
             <div className="flex justify-center items-center h-64 text-textSub font-bold">

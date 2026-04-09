@@ -21,10 +21,10 @@ import { AllPosts } from "./features/post/components/list/AllPosts";
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <RootLayout />, // 공통 레이아웃 적용
+    element: <RootLayout />,
     children: [
       {
-        index: true, // 메인 페이지 ("/")
+        index: true,
         element: <Home />,
       },
       { path: "login", element: <Login /> },
@@ -32,7 +32,6 @@ export const router = createBrowserRouter([
       {
         path: "donation",
         element: <Donation />,
-        // 함수를 실행해서 queryClient를 주입한 뒤, loader로 등록.
         loader: playersLoader(queryClient),
       },
       {

@@ -10,7 +10,7 @@ import defaultImage from "@/assets/myseoul_logo.png";
 interface Props {
   groupedPosts: Record<string, Post[]>;
   sortedKeys: string[];
-  observer: IntersectionObserver | null;
+  observer: (el: HTMLElement | null) => void;
 }
 
 export default function AllPostsImages({
@@ -23,14 +23,6 @@ export default function AllPostsImages({
 
   // 스크롤 할 때 이미지가 위 아래로 눕는 효과 넣기 위해 전체 컨테이너를 잡아야 함
   const containerRef = useRef<HTMLDivElement>(null);
-
-  // 연도 감지하는 Ref 등록 함수
-  const setRef = (el: HTMLDivElement | null, year: string) => {
-    if (el && observer) {
-      el.setAttribute("data-year", year);
-      observer.observe(el);
-    }
-  };
 
   // 스크롤 할 때 기울기 효과 적용
   useEffect(() => {
@@ -91,7 +83,7 @@ export default function AllPostsImages({
             <div
               key={post.postId}
               className={`relative flex flex-col will-change-transform`}
-              ref={isFirstMonth ? (el) => setRef(el, year) : null}
+              ref={isFirstMonth ? (el) => {el?.setAttribute("data-year", year); observer(el);} : null}
               style={{
                 transform: "perspective(1000px) rotateX(var(--tilt, 0deg))",
                 transformOrigin: "center center",
