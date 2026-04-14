@@ -130,6 +130,16 @@ export default function Header() {
                 후원하기
               </NavLink>
             </li>
+            <li className="md:hidden lg:block">
+              {" "}
+              {/* 공간 부족 시 태블릿에서 숨김 가능 */}
+              <NavLink
+                to="/betting"
+                className={({ isActive }) => getNavItemStyle(isActive)}
+              >
+                베팅하기
+              </NavLink>
+            </li>
           </ul>
         </div>
 

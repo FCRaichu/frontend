@@ -12,8 +12,8 @@ export default function RootLayout() {
   const isPostPath =
     !!user?.id && location.pathname.startsWith(`/post/${user.id}`);
   const isDonationPath = location.pathname === "/donation";
-
-  const noGap = isPostPath || isDonationPath;
+  const isBettingPath = location.pathname === "/betting";
+  const noGap = isPostPath || isDonationPath || isBettingPath;
 
   // DONE: 경로에 따라 바탕 색상 바꾸기
   useEffect(() => {
@@ -28,9 +28,7 @@ export default function RootLayout() {
     <div
       className={`flex flex-col min-h-screen ${noGap ? "gap-0" : "gap-16"} bg-${backColor}`}
     >
-      {/* DONE: 로그인 경로에서 헤더 없애기 */}
       {location.pathname !== "/login" && <Header />}
-
       <main className="flex-1 w-full mx-auto">
         <Outlet />
       </main>
