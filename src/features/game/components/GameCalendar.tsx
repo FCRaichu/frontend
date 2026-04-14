@@ -140,8 +140,7 @@ export const GameCalendar = () => {
     custom-calendar-wrapper
     w-full max-w-6xl mx-auto mt-16
     text-secondary
-    `}
-    >
+    `}>
       {/* 상단 타이틀 & 커스텀 헤더 */}
       <div className="relative text-center mb-24">
         <h1 className="text-8xl font-black text-secondary italic tracking-tighter opacity-5 absolute left-1/2 -top-12 -translate-x-1/2 select-none whitespace-nowrap">
@@ -157,8 +156,7 @@ export const GameCalendar = () => {
           <Typography
             variant="body-md"
             color="text-textSub"
-            className="font-bold tracking-[0.2em] uppercase"
-          >
+            className="font-bold tracking-[0.2em] uppercase">
             {currentYear} SEASON — {currentMonth}월
           </Typography>
           <div className="h-px w-12 bg-border"></div>
@@ -171,8 +169,7 @@ export const GameCalendar = () => {
           {/* DONE: 이전, 다음 버튼으로 바꾸기 */}
           <button
             onClick={handlePrev}
-            className="hover:text-main transition-colors font-medium cursor-pointer"
-          >
+            className="hover:text-main transition-colors font-medium cursor-pointer">
             <MdOutlineArrowBackIos className="hover:text-primary transition-colors font-medium cursor-pointer" />
           </button>
           {/* DONE: 연도와 월을 select 할 수 있게 바꾸기 */}
@@ -181,8 +178,7 @@ export const GameCalendar = () => {
             <select
               value={currentYear}
               onChange={handleYearChange}
-              className="absolute inset-0 opacity-0 cursor-pointer z-10 w-full"
-            >
+              className="absolute inset-0 opacity-0 cursor-pointer z-10 w-full">
               {yearOptions.map((y) => (
                 <option key={y} value={y}>
                   {y}년
@@ -199,8 +195,7 @@ export const GameCalendar = () => {
             <select
               value={currentMonth}
               onChange={handleMonthChange}
-              className="absolute inset-0 opacity-0 cursor-pointer z-10 w-full"
-            >
+              className="absolute inset-0 opacity-0 cursor-pointer z-10 w-full">
               {monthOptions.map((m) => (
                 <option key={m} value={m}>
                   {m}월
@@ -289,8 +284,7 @@ export const GameCalendar = () => {
                   isFuture || isAttended
                     ? "cursor-default"
                     : "cursor-pointer hover:scale-105"
-                } ${isFuture ? "opacity-80 grayscale" : "opacity-100"}`}
-            >
+                } ${isFuture ? "opacity-80 grayscale" : "opacity-100"}`}>
               {opponentTeam ? (
                 <img
                   src={opponentTeam.image}
@@ -304,9 +298,17 @@ export const GameCalendar = () => {
               )}
 
               {/* 시간 */}
-              <div className="text-[11px] font-bold text-textMain">
-                {gameData.time || "19:00"}
-              </div>
+              {gameData.result ? (
+                <div className="text-[11px] font-bold text-textMain">
+                  {gameData.homeScore} :{" "}
+                  <span className="text-[#6C757D]">{gameData.awayScore}</span>
+                </div>
+              ) : (
+                <div className="text-[11px] font-bold text-textMain">
+                  {gameData.time || "19:00"}
+                </div>
+              )}
+
               {/* 경기장 */}
               <div className="text-[10px] text-textSub mt-1 whitespace-nowrap">
                 {gameData.stadium || "상암 월드컵 경기장"}
@@ -316,7 +318,7 @@ export const GameCalendar = () => {
         }}
         eventClick={(info) => {
           const gameData = info.event.extendedProps;
-          
+
           // 경기 결과가 입력되지 않은 경우 기록할 수 없음.
           if (!gameData.result) {
             alert("경기 결과가 등록된 후 기록할 수 있습니다.");
