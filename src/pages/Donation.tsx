@@ -3,8 +3,7 @@ import PlayerSlider from "@/features/donation/components/PlayerSlider";
 export default function DonationPage() {
   return (
     <div className="min-h-[calc(100vh-61px)] bg-secondary">
-      {/* 상단 섹션 */}
-      <div className="pt-24 pb-12 px-10">
+      <div className="pt-12 pb-12 px-10">
         <h2 className="text-primary text-xl font-black italic tracking-widest mb-2">
           PLAYER SUPPORT
         </h2>
