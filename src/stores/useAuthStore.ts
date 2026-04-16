@@ -51,11 +51,12 @@ export const useAuthStore = create<AuthState>()(
         set({
           user: {
             id: user.id,
-            userId: user.userId,
+            email: user.email,
             nickname: user.nickname,
             role: user.role,
             points: user.points,
             checkPoint: user.checkPoint,
+            attendanceStreak: user.attendanceStreak,
           },
         });
       },
