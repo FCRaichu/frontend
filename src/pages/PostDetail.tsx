@@ -7,7 +7,6 @@ import { deleteMyRecord, getRecordById } from "@/features/post/api/postApi";
 import ImageSlider from "@/features/post/components/detail/ImageSlider";
 import MatchInfo from "@/features/post/components/detail/MatchInfo";
 import Typography from "@/components/common/Typography";
-import { formatDate } from "@/utils/formatDate";
 
 // 아이콘
 import { FiEdit } from "react-icons/fi";
@@ -68,67 +67,69 @@ export default function PostDetail() {
 
   return (
     <div className="flex w-full h-[calc(100vh-64px)] bg-card overflow-hidden">
-      <div className="w-1/2 h-full flex flex-col px-16 py-10 overflow-hidden">
+      <div className="w-1/2 h-full flex flex-col overflow-hidden">
         {/* 상단 경기 정보는 스크롤 없이 "고정"!! */}
         {gameData && (
-          <div className="shrink-0 mb-10">
+          <div className="shrink-0">
             <MatchInfo
-              date={formatDate(gameData.date)}
+              date={gameData.date}
               opponent={gameData.opponent}
               stadium={gameData.stadium}
+              result={[gameData.homeScore, gameData.awayScore]}
             />
           </div>
         )}
 
-        {/* 본문 내용만 스크롤!! */}
-        <div className="flex-1 overflow-y-auto scrollbar-hide">
-          <div className="flex flex-col gap-5">
+        {/* 본문 전체를 감싸는 상대 위치(relative) 컨테이너 */}
+        <div className="relative flex flex-col h-full pb-10 px-24 overflow-hidden">
+          {/* 본문 내용만 스크롤!! */}
+          <div
+            className="flex-1 overflow-y-auto scrollbar-hide pt-20 pb-10 
+                      mask-[linear-gradient(to_bottom,transparent_15%,black_20%,black_98%,transparent_100%)]">
             {postData && (
-              <>
-                <Typography variant="display" color="text-secondary">
+              <div className="flex flex-col gap-20">
+                <Typography variant="h1" color="text-secondary">
                   {postData?.title}
                 </Typography>
 
                 <Typography
                   variant="body-lg"
-                  color="text-secondary"
-                  className="whitespace-pre-wrap leading-relaxed"
-                >
+                  color="font-medium! text-secondary"
+                  className="whitespace-pre-wrap leading-relaxed">
                   {postData?.content}
                 </Typography>
-              </>
+              </div>
+            )}
+          </div>
+
+          {/* 이전으로 버튼도 고정!! */}
+          <div className="shrink-0 flex items-center justify-between mt-8 border-t border-border pt-6">
+            {/* 왼쪽: 이전으로 */}
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2 text-disabledGray hover:text-secondary transition-colors font-bold text-lg cursor-pointer">
+              <span className="text-xl">←</span> 이전으로
+            </button>
+
+            {user?.id === Number(userId) && (
+              <div className="flex items-center gap-6">
+                <button
+                  onClick={handleEdit}
+                  className="text-disabledGray hover:text-primary transition-colors font-bold text-lg cursor-pointer">
+                  <FiEdit className="font-bold" />
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="text-disabledGray hover:text-primary transition-colors font-bold text-lg cursor-pointer">
+                  <MdOutlineDeleteForever className="text-2xl" />
+                </button>
+              </div>
             )}
           </div>
         </div>
-
-        {/* 이전으로 버튼도 고정!! */}
-        <div className="shrink-0 flex items-center justify-between mt-8 border-t border-border pt-6">
-          {/* 왼쪽: 이전으로 */}
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-disabledGray hover:text-secondary transition-colors font-bold text-lg cursor-pointer"
-          >
-            <span className="text-xl">←</span> 이전으로
-          </button>
-
-          {user?.id === Number(userId) && (
-            <div className="flex items-center gap-6">
-              <button
-                onClick={handleEdit}
-                className="text-disabledGray hover:text-primary transition-colors font-bold text-lg cursor-pointer"
-              >
-                <FiEdit className="font-bold" />
-              </button>
-              <button
-                onClick={handleDelete}
-                className="text-disabledGray hover:text-primary transition-colors font-bold text-lg cursor-pointer"
-              >
-                <MdOutlineDeleteForever className="text-2xl" />
-              </button>
-            </div>
-          )}
-        </div>
       </div>
+
+      {/* 우측 이미지 슬라이더 */}
       {postData && (
         <div className="w-1/2 h-full overflow-hidden">
           <ImageSlider images={postData.images} />
