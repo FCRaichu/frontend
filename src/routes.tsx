@@ -17,6 +17,7 @@ import RecordWriteStep from "./features/post/components/write/RecordWriteStep";
 import { GamePicker } from "./features/post/components/write/GamePickerStep";
 import { AllPosts } from "./features/post/components/list/AllPosts";
 import Betting from "./pages/Betting";
+import Admin from "./pages/Admin";
 
 // React Router 팀에서 권장하는 Data APIs & 객체 스타일 방식을 사용해 보았다.
 export const router = createBrowserRouter([
@@ -28,6 +29,7 @@ export const router = createBrowserRouter([
         index: true,
         element: <Home />,
       },
+      { path: "admin", element: <Admin /> },
       { path: "login", element: <Login /> },
       { path: "signup", element: <SignUp /> },
       {
