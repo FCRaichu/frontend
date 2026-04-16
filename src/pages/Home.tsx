@@ -53,8 +53,7 @@ export default function Home() {
       {/* 랜딩 레이어 */}
       {isLanding && (
         <div
-          className={`fixed inset-0 z-999 bg-white landing-layer ${isExiting ? `${styles.landingExit}` : ""}`}
-        >
+          className={`fixed inset-0 z-999 bg-white landing-layer ${isExiting ? `${styles.landingExit}` : ""}`}>
           <IntroAnimation />
         </div>
       )}
@@ -62,8 +61,7 @@ export default function Home() {
       {/* 메인 콘텐츠 */}
       {/* 인트로가 아예 필요 없는 방문자라면 바로 보여주고, 인트로 중이면 opacity-0 유지 */}
       <main
-        className={`mb-60 ${!isLanding ? `${styles.contentFadeIn}` : "opacity-0"}`}
-      >
+        className={`mb-60 ${!isLanding ? `${styles.contentFadeIn}` : "opacity-0"}`}>
         {/* 캘린더 */}
         <GameCalendar />
         {/* 직관 기록 */}
@@ -74,6 +72,7 @@ export default function Home() {
         {isModalOpen && (
           <AttendanceCheckModal
             point={user?.checkPoint || 0}
+            streak={user?.attendanceStreak || 0}
             onClose={closeModal}
           />
         )}

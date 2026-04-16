@@ -1,62 +1,69 @@
-// 출석체크 모달
-// 데이터에 들어오는 checkPoint의 값이 0이면 이미 출석체크 한 것. 아니라면 출석체크 안 함
-// 이미 Zustand에서 checkPoint의 값을 저장하고 있으니까 다른 값 넘겨줄 필요 없이 직접 불러오도록 하자.
-// checkPoint의 값에 따라서 홈 컴포넌트에서 모달 노출 여부를 결정하도록 하자.
-// 여기서는 디자인만!!
-
 import Typography from "@/components/common/Typography";
-import Button from "@components/common/Button";
-import { useAuthStore } from "@/stores/useAuthStore";
+import Button from "@/components/common/Button";
 
 interface AttendanceModalProps {
   point: number;
+  streak: number;
   onClose: () => void;
 }
 
 export const AttendanceCheckModal = ({
   point,
+  streak,
   onClose,
 }: AttendanceModalProps) => {
-  const { user, setUser } = useAuthStore();
+  // 요일에 상관없이, 현재 스트릭을 기준으로 7일 주기 중 며칠째인지 계산합니다.
+  const currentCycleDays = streak === 0 ? 0 : streak % 7 === 0 ? 7 : streak % 7;
 
-  const handleConfirm = () => {
-    // 전역 상태의 checkPoint를 0으로 업데이트
-    // 이렇게 하면 홈 컴포넌트의 모달 노출 조건(checkPoint > 0) 달성되어서 한 번만 뜨고 안 뜨게 할 수 있음.
-    if (user && setUser) {
-      setUser({
-        ...user,
-        checkPoint: 0,
-      });
-    }
-    onClose();
-  };
+  // 프로그래스바 너비 퍼센트 계산
+  const progressPercentage = (currentCycleDays / 7) * 100;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl p-8 w-80 flex flex-col items-center shadow-xl animate-in fade-in zoom-in duration-300">
-        {/* TODO: 이미지 예쁜 걸로 넣어볼까 불 말고 */}
-        <div className="w-16 h-16 bg-line rounded-full flex items-center justify-center mb-4">
-          <span className="text-3xl">🔥</span>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <div className="bg-white rounded-[32px] w-full max-w-[400px] flex flex-col items-center overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
+        <div className="p-8 w-full flex flex-col items-center">
+          {/* 상단 스트릭 아이콘 */}
+          <div className="relative mb-6">
+            <span className="text-[80px] leading-none">🔥</span>
+          </div>
+
+          {/* 스트릭 숫자 */}
+          <div className="flex flex-col items-center gap-1 mb-8">
+            <Typography variant="display" color="text-primary">
+              {streak}
+            </Typography>
+            <Typography
+              variant="body-lg"
+              color="text-disabledGray"
+              className="font-medium!">
+              일 연속 출석
+            </Typography>
+          </div>
+
+          {/* 진행 상태 UI */}
+          <div className="w-full bg-slate-50 border border-slate-100 rounded-3xl p-6 mb-8">
+            <div className="flex justify-between items-center mb-2 text-sm font-semibold">
+              <span className="text-slate-400">연속 출석 달성도</span>
+              <span className="text-primary">{currentCycleDays} / 7일</span>
+            </div>
+
+            {/* 얇은 프로그래스바 */}
+            <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-primary transition-all duration-700 ease-out rounded-full"
+                style={{ width: `${progressPercentage}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Button 컴포넌트 (호버 및 액티브 효과 추가) */}
+          <Button
+            onClick={onClose}
+            width="full"
+            className="bg-gray-900! text-white! rounded-xl! transition-all duration-200 hover:bg-black! active:scale-[0.98]!">
+            + {point} 포인트 받기
+          </Button>
         </div>
-
-        <Typography variant="h3" color="text-primary" className="mb-2">
-          출석 완료!
-        </Typography>
-
-        <Typography
-          variant="body-md"
-          color="text-gray-500"
-          className="text-center mb-6"
-        >
-          오늘 <span className="font-bold text-secondary">{point}P</span>를
-          획득했습니다.
-          <br />
-          {/* TODO: 연속 출석 7의 배수로 처리하기 */}
-        </Typography>
-
-        <Button onClick={handleConfirm} width="full" className="py-3">
-          확인
-        </Button>
       </div>
     </div>
   );
