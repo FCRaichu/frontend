@@ -129,7 +129,7 @@ export default function Header() {
               <NavLink
                 to="/betting"
                 className={({ isActive }) => getNavItemStyle(isActive)}>
-                베팅하기
+                배팅하기
               </NavLink>
             </li>
             {user?.role === "ADMIN" && (
