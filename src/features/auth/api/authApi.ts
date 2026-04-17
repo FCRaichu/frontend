@@ -1,43 +1,96 @@
-import type { LoginRequest, SignUpRequest } from "@/features/auth/types/auth";
-import { api } from "@api/axiosInstance";
-import axios from "axios";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { api } from "@api/axiosInstance";
 
 // 로그인 로직
-// 1. key cloak에 아이디와 비밀번호를 보내서 액세스 토큰과 리프레시 토큰을 받아온다.
-// 2. 액세스 토큰을 가지고 서버에 get 요청을 한다.
-// 3. 만약 액세스 토큰으로 접근했는데 서버로부터 특정 에러가 나면?
-// 3-1. 아까 받아온 리프레시 토큰으로 다시 액세스 토큰을 받아온다.
-// 3-2. 액세스 토큰을 가지고 다시 서버에 접근한다.
+// 1. Keycloak 로그인 페이지로 이동
+// 이동 시 코드와 해싱 코드를 가지고 이동
+// 2. 콜백 처리
+// 코드를 액세스 토큰으로 교환하여 받음
+// 3. 받은 토큰을 백엔드에 전달
+// 4. zustand 스토어에 토컨 저장
+// 5. 사용한 세션 데이터 삭제
 
-// Keycloak에서 토큰을 받아오는 내부 함수
-export const getLogin = async (data: LoginRequest) => {
-  const params = new URLSearchParams();
-  params.append("client_id", "test-client");
-  params.append("username", data.userId);
-  params.append("password", data.password);
-  params.append("grant_type", "password");
+/** Keycloak 리다이렉트 로그인
+ * PKCE (Proof Key for Code Exchange) 방식을 사용하여 보안을 강화
+ * 1. generateCodeVerifier: 랜덤한 문자열 생성
+ * 2. generateCodeChallenge: codeVerifier를 해싱하여 codeChallenge 생성
+ * 3. 로그인 요청 시 codeChallenge와 함께 리다이렉트
+ */
+export const loginWithKeycloak = async () => {
+  const codeVerifier = generateCodeVerifier();
+  const codeChallenge = await generateCodeChallenge(codeVerifier);
+  const state = crypto.randomUUID();
 
-  const keycloakRes = await axios.post(
-    "https://raichu.inwoohub.com/auth/realms/fcraichu/protocol/openid-connect/token",
-    params,
-    { headers: { "Content-Type": "application/x-www-form-urlencoded" } },
-  );
+  // PKCE를 위해 verifier와 state 임시 저장
+  sessionStorage.setItem("code_verifier", codeVerifier);
+  sessionStorage.setItem("oauth_state", state);
 
-  // key cloak 응답에서 토큰을 추출한다.
-  const { access_token, token_type, refresh_token } = keycloakRes.data;
+  const params = new URLSearchParams({
+    client_id: import.meta.env.VITE_KEYCLOAK_CLIENT_ID,
+    response_type: "code",
+    redirect_uri: import.meta.env.VITE_KEYCLOAK_REDIRECT_URI,
+    scope: "openid profile email",
+    code_challenge: codeChallenge,
+    code_challenge_method: "S256",
+    state,
+  });
 
-  // zustand 스토어에 토큰 저장
-  const { setAuth, setUser } = useAuthStore.getState();
-  setAuth(access_token, token_type, refresh_token);
+  window.location.href = `${import.meta.env.VITE_KEYCLOAK_URL}?${params.toString()}`;
+};
 
-  // 저장된 토큰으로 내 정보 요청 (로그인!!!!!!!!!! ⭐️)
-  const userRes = await api.get(`/api/users/me`);
+/** Keycloak 콜백 처리
+ * 1. code, state를 URL에서 가져와서 session에 있는 것과 비교
+ * 2. 백엔드에 액세스 코드 전달
+ *    // 2-1. user/me에 api 요청 후 404 에러 반환 시 join
+ *    // 2-2. join 시 닉네임과 액세스 코드만 가지고 요청
+ *    // 2-3. 가입 완료 시 다시 user/me 부르기 (사용자는 모르게 동작)
+ */
+export const handleAuthCallback = async (code: string, state: string) => {
+  const savedState = sessionStorage.getItem("oauth_state");
+  const codeVerifier = sessionStorage.getItem("code_verifier");
 
-  // 유저 정보도 스토어에 저장
-  setUser(userRes.data);
+  // 중복 요청을 위해 시작하자마자 세션 데이터 삭제
+  sessionStorage.removeItem("code_verifier");
+  sessionStorage.removeItem("oauth_state");
 
-  return userRes.data;
+  // state와 codeVerifier 검증
+  if (state !== savedState || !codeVerifier) {
+    console.warn("세션이 만료되었거나 잘못된 접근입니다.");
+    window.location.replace("/"); // 뒤로 가기 방지
+    return { status: "ERROR_REDIRECT" }; // 함수 종료
+  }
+
+  try {
+    // 키클락에서 액세스 토큰 받아오기
+    const tokenRes = await api.post(`/api/auth/callback`, {
+      code,
+      codeVerifier,
+    });
+    const { accessToken } = tokenRes.data;
+
+    // 토큰을 zustand에 저장
+    const { setAuth, setUser } = useAuthStore.getState();
+    setAuth(accessToken, "Bearer", "");
+
+    try {
+      // 백엔드에서 유저 정보 받아오기
+      const userRes = await getUserInfo();
+      setUser(userRes.data);
+
+      // 기존 가입자는 그대로 로그인 완료 처리
+      return { status: "SUCCESS" };
+    } catch (error: any) {
+      // 처음 등록하는 사용자
+      if (error.response?.status === 404) {
+        // 닉네임 입력창 띄우도록 UI에게 요청해야 함
+        return { status: "NEED_SIGNUP" };
+      }
+      throw error;
+    }
+  } catch (error) {
+    console.error("인증 에러", error);
+    throw error;
+  }
 };
 
 // 유저 정보 받아오기
@@ -47,13 +100,39 @@ export const getUserInfo = async () => {
 };
 
 // 회원가입 로직
-export const postSingUp = async (data: SignUpRequest) => {
-  const res = await api.post(`/api/users/join`, data);
-  return res;
+export const postSingUp = async (nickname: string) => {
+  // 닉네임을 백엔드에 보내기
+  await api.post(`/api/users/join`, { nickname });
+
+  // 유저 생성 완료되면 users/me로 다시 접근하여 정보 가져오기
+  const userRes = await getUserInfo();
+  useAuthStore.getState().setUser(userRes.data);
+
+  return userRes.data;
 };
 
 // 닉네임 변경 로직
 export const patchNickname = async (nickname: string) => {
   const res = await api.patch(`/api/users/nickname`, { nickname: nickname });
   return res;
+};
+
+// 기타 함수
+const generateCodeVerifier = () => {
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return btoa(String.fromCharCode(...array))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=/g, "");
+};
+
+const generateCodeChallenge = async (verifier: string) => {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(verifier);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  return btoa(String.fromCharCode(...new Uint8Array(digest)))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=/g, "");
 };
