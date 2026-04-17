@@ -18,7 +18,7 @@ export default function MyBettingHistory() {
     {
       gameDate: "2026.01.01",
       opponent: "전북 현대",
-      betPoint: 300,
+      betPoint: 100,
       rates: { win: 40, draw: 30, lose: 30 },
       gameResult: "win",
       payout: 600,
@@ -26,7 +26,7 @@ export default function MyBettingHistory() {
     {
       gameDate: "2026.01.01",
       opponent: "울산 HD",
-      betPoint: 500,
+      betPoint: 100,
       rates: { win: 20, draw: 10, lose: 70 },
       gameResult: "lose",
       payout: 0,
@@ -92,32 +92,44 @@ export default function MyBettingHistory() {
                     </td>
                     <td className="py-5 px-4">
                       {/* 미니 게이지 바 */}
-                      <div className="w-32 mx-auto h-2 rounded-full flex overflow-hidden bg-gray-100 shadow-inner">
-                        <div
-                          className="bg-primary"
-                          style={{ width: `${item.rates.win}%` }}></div>
-                        <div
-                          className="bg-border"
-                          style={{ width: `${item.rates.draw}%` }}></div>
-                        <div
-                          className="bg-blue-600"
-                          style={{ width: `${item.rates.lose}%` }}></div>
+                      <div className="relative group flex flex-col items-center">
+                        <div className="absolute -top-8 hidden group-hover:flex bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap shadow-lg">
+                          {`승:${item.rates.win} / 무:${item.rates.draw} / 패:${item.rates.lose}`}
+                        </div>
+
+                        {/* 기존 게이지 바 */}
+                        <div className="w-32 mx-auto h-2 rounded-full flex overflow-hidden bg-gray-100 shadow-inner">
+                          <div
+                            className="bg-primary hover:brightness-90 transition-all"
+                            style={{ width: `${item.rates.win}%` }}></div>
+                          <div
+                            className="bg-border hover:brightness-90 transition-all"
+                            style={{ width: `${item.rates.draw}%` }}></div>
+                          <div
+                            className="bg-blue-600 hover:brightness-90 transition-all"
+                            style={{ width: `${item.rates.lose}%` }}></div>
+                        </div>
                       </div>
                     </td>
                     <td className="py-5 px-4">
                       {item.payout > 0 ? (
                         <div className="flex flex-col items-center gap-1">
                           <span className="inline-block px-3 py-1 border border-primary text-primary bg-light rounded-full text-xs font-black">
-                            예측 성공
+                            성공
                           </span>
                           <span className="text-xs text-primary font-bold">
-                            +{item.payout} P
+                            + {item.payout}P
                           </span>
                         </div>
                       ) : (
-                        <span className="inline-block px-3 py-1 border border-textSub text-textSub rounded-full text-xs font-bold">
-                          예측 실패
-                        </span>
+                        <div className="flex flex-col items-center gap-1">
+                          <span className="inline-block px-3 py-1 border border-textSub text-textSub rounded-full text-xs font-bold">
+                            실패
+                          </span>
+                          <span className="text-xs text-textSub font-bold">
+                            - {item.payout}P
+                          </span>
+                        </div>
                       )}
                     </td>
                   </tr>
