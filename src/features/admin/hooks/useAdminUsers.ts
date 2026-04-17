@@ -21,5 +21,18 @@ export const useAdminUsers = () => {
     }
   };
 
-  return { users, isLoading, error, fetchUsers };
+  // ✅ 통계
+  const totalCount = users.length;
+  const adminCount = users.filter((u) => u.role === "ADMIN").length;
+  const userCount = users.filter((u) => u.role === "USER").length;
+
+  return {
+    users,
+    isLoading,
+    error,
+    fetchUsers,
+    totalCount,
+    adminCount,
+    userCount,
+  };
 };
