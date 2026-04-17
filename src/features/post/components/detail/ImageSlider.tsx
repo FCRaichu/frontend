@@ -13,14 +13,14 @@ export const ImageSlider = ({ images }: ImageSliderProps) => {
   // 이미지가 없을 때 예외 처리
   if (!images || images.length === 0) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-subtleGray text-textSub">
+      <div className="w-full h-full flex items-center justify-center text-textSub">
         이미지가 없습니다.
       </div>
     );
   }
 
   return (
-    <div className="w-full h-full bg-subtleGray overflow-hidden ImageSlider-container">
+    <div className="w-full h-full overflow-hidden ImageSlider-container border-l-2 border-subtleGray">
       <Swiper
         modules={[Pagination, A11y, Autoplay]} // 사용할 모듈들
         spaceBetween={0} // 슬라이드 간 간격
@@ -39,13 +39,11 @@ export const ImageSlider = ({ images }: ImageSliderProps) => {
           prevSlideMessage: "이전 슬라이드",
           nextSlideMessage: "다음 슬라이드",
         }}
-        className="w-full h-full"
-      >
+        className="w-full h-full">
         {images.map((imgUrl, index) => (
           <SwiperSlide
             key={index}
-            className="flex items-center justify-center p-12"
-          >
+            className="flex items-center justify-center p-12">
             <div className="w-full h-full flex items-center justify-center p-12">
               <img
                 src={`${import.meta.env.VITE_IMAGE_BASE_URL}${imgUrl}`}

@@ -4,20 +4,22 @@ import type { User } from "@/features/auth/types/auth";
 
 // 유저 상태
 interface AuthState {
-  user: User | null; // 사용자가 로그인이 아직 안 된 상태를 대비해서 null
-  tokenType: string | null; // key cloak 토큰 타입
+  user: User | null;
   accessToken: string | null; // key cloak 액세스 토큰
-  refreshToken: string | null; // key cloak 리프레시 토큰
-  isLoggedIn: () => boolean; // 로그인 여부 확인
+  refreshToken: string | null;
+  tokenType: string | null; // key cloak 토큰 타입
+
+  // Actions
   // key cloak 성공적으로 부르면 아래의 내용 받아오기
   setAuth: (
     accessToken: string,
     tokenType: string,
-    refreshToken?: string,
+    refreshToken: string,
   ) => void;
-  // 서버에서 성공적으로 데이터 받아오면 아래 내용 추가하기
+
   setUser: (user: User) => void;
   updateUser: (userInfo: Partial<User>) => void;
+  isLoggedIn: () => boolean; // 로그인 여부 확인
   logout: () => void; // 로그아웃 시 호출
 }
 
@@ -38,26 +40,17 @@ export const useAuthStore = create<AuthState>()(
       setAuth: (
         accessToken: string,
         tokenType: string,
-        refreshToken?: string,
+        refreshToken: string,
       ) => {
         set({
           accessToken,
           tokenType,
-          refreshToken: refreshToken || get().refreshToken,
+          refreshToken,
         });
       },
 
       setUser: (user: User) => {
-        set({
-          user: {
-            id: user.id,
-            userId: user.userId,
-            nickname: user.nickname,
-            role: user.role,
-            points: user.points,
-            checkPoint: user.checkPoint,
-          },
-        });
+        set({ user: { ...user } });
       },
 
       updateUser: (userInfo: Partial<User>) => {
@@ -76,10 +69,11 @@ export const useAuthStore = create<AuthState>()(
         set({
           user: null,
           accessToken: null,
-          refreshToken: null,
           tokenType: null,
+          refreshToken: null,
         }),
     }),
+
     { name: "auth-storage" }, // 로컬 스토리지에 저장될 키 이름
   ),
 );
