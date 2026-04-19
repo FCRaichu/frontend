@@ -317,6 +317,13 @@ export const GameCalendar = () => {
           );
         }}
         eventClick={(info) => {
+          // 로그인하지 않은 상태면 로그인 페이지로 이동
+          if (!loggedIn) {
+            alert("경기 기록은 로그인 후 이용 가능합니다.");
+            navigate("/login");
+            return;
+          }
+
           const gameData = info.event.extendedProps;
 
           // 경기 결과가 입력되지 않은 경우 기록할 수 없음.
