@@ -16,7 +16,7 @@ export interface ActiveBettingData {
 
 export interface PostBettingRequest {
   gameId: number;
-  windPoint: number;
+  winPoint: number;
   drawPoint: number;
   losePoint: number;
 }
