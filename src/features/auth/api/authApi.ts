@@ -55,7 +55,7 @@ export const handleAuthCallback = async (code: string, state: string) => {
 
   // state와 codeVerifier 검증
   if (state !== savedState || !codeVerifier) {
-    console.warn("세션이 만료되었거나 잘못된 접근입니다.");
+    alert("세션이 만료되었거나 잘못된 접근입니다.");
     window.location.replace("/"); // 뒤로 가기 방지
     return { status: "ERROR_REDIRECT" }; // 함수 종료
   }

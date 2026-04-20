@@ -59,7 +59,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         // Refresh도 실패한 경우 (리프레시 토큰 만료) -> 강제 로그아웃
         useAuthStore.getState().logout();
-        alert("다시 로그인해주세요.");
+        alert("로그인이 필요한 서비스입니다.");
         window.location.href = "/login";
 
         return Promise.reject(refreshError);

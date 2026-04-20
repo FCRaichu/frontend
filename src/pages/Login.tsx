@@ -2,30 +2,54 @@ import {
   handleAuthCallback,
   loginWithKeycloak,
 } from "@/features/auth/api/authApi";
-import { useEffect } from "react";
+import {
+  getMyUnreadBetting,
+  putMyUnreadBetting,
+} from "@/features/betting/api/betting";
+
+import { useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Login() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const isProcessed = useRef(false); // 로그인 중복 요청 방지용 플래그
 
   useEffect(() => {
     const processAuth = async () => {
       const code = searchParams.get("code");
       const state = searchParams.get("state");
+      if (isProcessed.current) return; // true이면 이미 처리 중이므로 무시
 
       if (code && state) {
+        isProcessed.current = true;
         try {
           const result = await handleAuthCallback(code, state);
 
           if (result.status === "SUCCESS") {
+            // 로그인 성공 시 베팅 결과 뿌려주는 api 호출
+            try {
+              const unreadBettings = await getMyUnreadBetting();
+
+              if (unreadBettings && unreadBettings.length > 0) {
+                // 확인하지 않은 ID들만 모아서 PUT 호출
+                const ids = unreadBettings.map((bet: any) => bet.id);
+                await putMyUnreadBetting(ids);
+              }
+            } catch (error) {
+              // 베팅 API 에러가 로그인 흐름을 방해하지 않도록 예외 처리
+              console.error("베팅 정산 확인 중 오류:", error);
+            }
+
             // 기존 회원은 로그인 성공 및 메인 페이지로 이동
             navigate("/");
           } else if (result.status === "NEED_SIGNUP") {
             // 미가입 사용자는 닉네임 설정 페이지로 이동
             navigate("/signup");
           }
-        } catch (e) {}
+        } catch (e) {
+          isProcessed.current = false; // 에러 발생 시 다시 로그인 시도할 수 있도록.
+        }
       } else {
         // 최초 진입 시, keycloak 로그인 페이지로 리다이렉트
         loginWithKeycloak();
@@ -34,6 +58,7 @@ export default function Login() {
 
     processAuth();
   }, []);
+
   return (
     <div className="flex items-center justify-center h-screen">
       <p className="text-body-lg">로그인 페이지로 이동 중입니다...</p>

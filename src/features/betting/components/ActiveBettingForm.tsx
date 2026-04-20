@@ -17,7 +17,7 @@ export default function ActiveBettingForm({
   const [selectedOutcome, setSelectedOutcome] = useState<
     "win" | "draw" | "lose"
   >("win");
-  const [betAmount, setBetAmount] = useState<string>("10,000");
+  const [betAmount, setBetAmount] = useState<string>("0");
 
   // --- 유틸 로직 ---
   const formatNumber = (val: number) => val.toLocaleString();
@@ -30,7 +30,6 @@ export default function ActiveBettingForm({
   };
 
   const handleMaxAmount = () => {
-    // 임시 MAX 값
     setBetAmount(formatNumber(Number(userPoint)));
   };
 
@@ -41,14 +40,21 @@ export default function ActiveBettingForm({
 
   // --- 비율 계산 ---
   const { winPoint, drawPoint, losePoint } = activeBettingData;
-  const winRate = getWDLRate(winPoint, winPoint + drawPoint + losePoint);
-  const drawRate = getWDLRate(drawPoint, winPoint + drawPoint + losePoint);
+  const winRate = `${getWDLRate(winPoint, winPoint + drawPoint + losePoint)}%`;
+  const drawRate = `${getWDLRate(drawPoint, winPoint + drawPoint + losePoint)}%`;
   const loseRate = `${100 - parseInt(winRate) - parseInt(drawRate)}%`;
+
+  // --- 배팅하기 버튼 ---
+  const handleBetting = () => {
+    // TODO: API 연동
+    // TODO: 포인트별로 분기 처리
+    alert(`${selectedOutcome}에 ${betAmount}P 배팅 시도`);
+  };
 
   return (
     <div className="flex gap-6 w-full max-w-full mx-auto items-start">
       {/* 왼쪽: 배팅 현황 */}
-      <div className="flex-[2] bg-white rounded-2xl shadow-sm border border-border p-8 flex flex-col gap-6 self-start">
+      <div className="flex-2 bg-white rounded-2xl shadow-sm border border-border p-8 flex flex-col gap-6 self-start">
         <div className="flex justify-between items-start">
           <h3 className="font-bold text-xl text-textDark">
             현재 진행 중인 배팅
@@ -150,9 +156,7 @@ export default function ActiveBettingForm({
         <Button
           width="full"
           className="py-5 text-lg! font-black! h-14!"
-          onClick={() =>
-            console.log(`${selectedOutcome}에 ${betAmount}P 배팅 시도`)
-          }>
+          onClick={handleBetting}>
           배팅하기
         </Button>
       </div>
