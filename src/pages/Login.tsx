@@ -1,92 +1,67 @@
-import { getLogin } from "@/apis/auth/authApi";
-import Button from "@/components/common/Button";
-import Input from "@/components/common/Input";
-import LogoAnimation from "@/components/login/LogoAnimation";
-import Typography from "@/styles/common/Typography";
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  handleAuthCallback,
+  loginWithKeycloak,
+} from "@/features/auth/api/authApi";
+import {
+  getMyUnreadBetting,
+  putMyUnreadBetting,
+} from "@/features/betting/api/betting";
+
+import { useEffect, useRef } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Login() {
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const isProcessed = useRef(false); // 로그인 중복 요청 방지용 플래그
 
-  // 로그인 시 필요한 데이터 정의
-  const [loginData, setLoginData] = useState({
-    userId: "",
-    password: "",
-  });
+  useEffect(() => {
+    const processAuth = async () => {
+      const code = searchParams.get("code");
+      const state = searchParams.get("state");
+      if (isProcessed.current) return; // true이면 이미 처리 중이므로 무시
 
-  // 키값을 이벤트 객체로 가져와서 데이터 set 하기
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLoginData({
-      ...loginData,
-      [e.target.name]: e.target.value,
-    });
-  };
+      if (code && state) {
+        isProcessed.current = true;
+        try {
+          const result = await handleAuthCallback(code, state);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await getLogin(loginData);
-      alert("로그인 성공!");
-      navigate("/");
-    } catch (e) {
-      console.error("로그인 실패: ", e);
-      alert("로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.");
-    }
-  };
+          if (result.status === "SUCCESS") {
+            // 로그인 성공 시 베팅 결과 뿌려주는 api 호출
+            try {
+              const unreadBettings = await getMyUnreadBetting();
+
+              if (unreadBettings && unreadBettings.length > 0) {
+                // 확인하지 않은 ID들만 모아서 PUT 호출
+                const ids = unreadBettings.map((bet: any) => bet.id);
+                await putMyUnreadBetting(ids);
+              }
+            } catch (error) {
+              // 베팅 API 에러가 로그인 흐름을 방해하지 않도록 예외 처리
+              console.error("베팅 정산 확인 중 오류:", error);
+            }
+
+            // 기존 회원은 로그인 성공 및 메인 페이지로 이동
+            navigate("/");
+          } else if (result.status === "NEED_SIGNUP") {
+            // 미가입 사용자는 닉네임 설정 페이지로 이동
+            navigate("/signup");
+          }
+        } catch (e) {
+          isProcessed.current = false; // 에러 발생 시 다시 로그인 시도할 수 있도록.
+        }
+      } else {
+        // 최초 진입 시, keycloak 로그인 페이지로 리다이렉트
+        loginWithKeycloak();
+      }
+    };
+
+    processAuth();
+  }, []);
 
   return (
-    <div className="bg-secondary box-border overflow-x-hidden min-h-screen flex flex-col items-center justify-center pt-29 pb-10">
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col items-center w-full h-full"
-      >
-        <LogoAnimation />
-        <div className="flex flex-col items-center mb-8">
-          <Typography variant="h1" color="text-background" className="mb-4">
-            로그인
-          </Typography>
-          <Typography variant="h4" color="text-disabledGray">
-            FC라이츄 회원 로그인
-          </Typography>
-        </div>
-
-        <div className="flex flex-col items-start w-125">
-          <div className="flex flex-col gap-8 w-full">
-            <Input
-              label="ID"
-              name="userId"
-              placeholder="아이디"
-              onChange={handleChange}
-            />
-            <Input
-              label="비밀번호"
-              name="password"
-              placeholder="비밀번호"
-              type="password"
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="flex justify-between items-end w-full mt-4">
-            <Button type="submit" width="fixed" className="mt-8 mr-8">
-              로그인
-            </Button>
-            <Link
-              to="/signup"
-              className="flex gap-2 hover:opacity-80 transition-opacity"
-            >
-              <Typography
-                variant="body-md"
-                color="text-textSub"
-                className="hover:underline hover:text-background transition-colors "
-              >
-                회원가입
-              </Typography>
-            </Link>
-          </div>
-        </div>
-      </form>
+    <div className="flex items-center justify-center h-screen">
+      <p className="text-body-lg">로그인 페이지로 이동 중입니다...</p>
     </div>
   );
 }

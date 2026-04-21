@@ -1,27 +1,11 @@
-// 아래 주석 무시.. 고민했던 흔적이 아까워서 남겨두지만... 인증을 없애며 무용지물이 되어버린..
-
-// 글쓰기 페이지 흐름 정리 (일반 티켓인지 시즌권인지에 따라 달라지므로 제대로 정의하자.)
-// 1. 일반 티켓인 경우
-// 1-1. 첫 화면: 타이틀 - "티켓 인증" / 날짜 선택 / 인증 사진 등록 / Next
-// 1-2. 다음 화면: 타이틀 - "직관 기록하기" / 선택된 날짜 그대로 / 직관 기록 textarea / Send
-// 2. 시즌권 티켓인 경우 (인증 불필요)
-// 2-1. 첫 화면: 타이틀 - "직관 기록하기" / 날짜 선택 / / Next
-// 2-2. 다음 화면: 타이틀 - "직관 기록하기" / 선택된 날짜 그대로 / 직관 기록 textarea / Send
-
-// PostLayout에서 타이틀 분기, 날짜 선택까지 공통으로 사용
-// 1-1 은 post/general/verify
-// 1-2 는 post/general/new
-// 2-1 은 post/season-pass
-// 2-2 는 post/season-pass/new
-// 2-1과 2-2는 같은 컴포넌트 사용할 것.
-
-import { StepTracker } from "@/components/post/StepTracker";
-import DatePicker from "@/components/post/DatePicker";
-import Typography from "@/styles/common/Typography";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useParams } from "react-router-dom";
-import { getRecordById } from "@/apis/posts/postApi";
-import type { Post } from "@/types/post";
+
+import { getRecordById } from "@/features/post/api/postApi";
+import type { Post } from "@/features/post/types/post";
+import { StepTracker } from "@/features/post/components/write/StepTracker";
+import DatePicker from "@/features/post/components/write/DatePicker";
+import Typography from "@/components/common/Typography";
 
 export default function PostWriteBaseLayout() {
   // ⭐️ 이전 페이지에서 gameId를 넘겨준 경우 state 받아와서 분기 처리
@@ -66,10 +50,8 @@ export default function PostWriteBaseLayout() {
     const fetchOriginalPost = async () => {
       try {
         const res = await getRecordById(Number(postId));
-        if (res.status === 200) {
-          setInitialData(res.data);
-          setSelectedGameId(res.data.gameId);
-        }
+        setInitialData(res);
+        setSelectedGameId(res.gameId);
       } catch (e) {
         console.error("원본 포스트 로드 실패:", e);
       } finally {
