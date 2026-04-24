@@ -12,15 +12,15 @@ export const AttendanceCheckModal = ({
   streak,
   onClose,
 }: AttendanceModalProps) => {
-  // 요일에 상관없이, 현재 스트릭을 기준으로 7일 주기 중 며칠째인지 계산합니다.
+  // 요일에 상관없이, 현재 스트릭을 기준으로 7일 주기 중 며칠째인지 계산
   const currentCycleDays = streak === 0 ? 0 : streak % 7 === 0 ? 7 : streak % 7;
 
   // 프로그래스바 너비 퍼센트 계산
   const progressPercentage = (currentCycleDays / 7) * 100;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-[32px] w-full max-w-[400px] flex flex-col items-center overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+      <div className="bg-white rounded-4xl w-full max-w-100 flex flex-col items-center overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
         <div className="p-8 w-full flex flex-col items-center">
           {/* 상단 스트릭 아이콘 */}
           <div className="relative mb-6">
