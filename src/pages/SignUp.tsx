@@ -18,7 +18,7 @@ export default function SignUp() {
     e.preventDefault();
     try {
       const res = await postSingUp(nickname);
-      if (res.status === 201) {
+      if (res.status === 200) {
         alert("가입을 환영합니다!");
         navigate("/");
       }
