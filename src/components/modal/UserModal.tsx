@@ -33,8 +33,7 @@ export const UserModal = ({ user, setIsModalOpen }: Props) => {
           <p className="text-textMain font-bold">{user.nickname}</p>
           <button
             onClick={() => setIsEditModalOpen(true)}
-            className="text-xs text-textSub hover:text-primary transition-colors cursor-pointer outline-none"
-          >
+            className="text-xs text-textSub hover:text-primary transition-colors cursor-pointer outline-none">
             내 정보 수정하기 &gt;
           </button>
         </div>
@@ -48,14 +47,11 @@ export const UserModal = ({ user, setIsModalOpen }: Props) => {
 
         <div className="border-t border-gray-50 mt-1">
           <button
-            onClick={() => {
-              logout();
+            onClick={async () => {
               setIsModalOpen(false);
-              alert("로그아웃 되었습니다.");
-              window.location.replace("/"); // 새로고침해서 데이터 다시 페칭하게끔 (그래야 로그인 필요한 서비스인지 아닌지 알 수 있음.)
+              await logout();
             }}
-            className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-red-50 transition-colors cursor-pointer"
-          >
+            className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-red-50 transition-colors cursor-pointer">
             로그아웃
           </button>
         </div>
