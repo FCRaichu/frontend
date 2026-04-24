@@ -165,14 +165,8 @@ export default function Header() {
             <div className="flex items-center gap-2 md:gap-4 text-textSub">
               <Link
                 to="/login"
-                className="hover:text-textMain transition-colors">
-                Login
-              </Link>
-              <div className="w-px h-3 bg-border" />
-              <Link
-                to="/signup"
                 className="text-primary hover:text-hover transition-colors font-bold">
-                Join Us
+                로그인
               </Link>
             </div>
           )}
