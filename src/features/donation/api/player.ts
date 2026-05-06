@@ -4,7 +4,6 @@ import { api } from "@api/axiosInstance";
 // 현역 선수 전체 조회
 export const getAllActivePlayers = async () => {
   const res = await api.get(`/api/players/active`);
-  console.log(res.data);
   return res.data;
 };
 
