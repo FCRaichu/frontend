@@ -111,7 +111,7 @@ export default function PostDetail() {
               <span className="text-xl">←</span> 이전으로
             </button>
 
-            {user?.id === Number(userId) && (
+            {String(user?.id) === String(userId) && (
               <div className="flex items-center gap-6">
                 <button
                   onClick={handleEdit}
