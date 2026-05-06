@@ -1,4 +1,4 @@
-import type { Game } from "../features/game/types/game";
+import type { Game } from "@/features/game/types/game";
 
 // 포스트 조회 시
 export interface Post {
