@@ -1,9 +1,5 @@
 import { useEffect, useState } from "react";
-import type {
-  AdminGame,
-  GameAdminRequest,
-  GameResult,
-} from "../types/admin";
+import type { AdminGame, GameAdminRequest, GameResult } from "../types/admin";
 
 interface Props {
   initialGame: AdminGame | null; // null이면 생성 모드
@@ -74,7 +70,7 @@ export const GameForm = ({
     }
 
     const request: GameAdminRequest = {
-      date: new Date(date).toISOString(),
+      date: date,
       stadium,
       round: Number(round),
       homeTeam,
@@ -180,7 +176,9 @@ export const GameForm = ({
             type="button"
             onClick={() => setResult("")}
             className={`flex-1 py-1.5 border rounded text-sm ${
-              result === "" ? "bg-black text-white" : "bg-white hover:bg-gray-50"
+              result === ""
+                ? "bg-black text-white"
+                : "bg-white hover:bg-gray-50"
             }`}>
             미정
           </button>
