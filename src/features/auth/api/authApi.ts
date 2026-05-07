@@ -1,6 +1,19 @@
 import { useAuthStore } from "@/stores/useAuthStore";
 import { api } from "@api/axiosInstance";
 
+// 로그인 전후 잔여 데이터(토큰, 쿠키) 청소 유틸리티
+const clearAuthGarbage = () => {
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+
+  // JS로 접근 가능한 이전 세션 쿠키 날리기 (HttpOnly 제외)
+  document.cookie.split(";").forEach((c) => {
+    document.cookie = c
+      .replace(/^ +/, "")
+      .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+  });
+};
+
 // 로그인 로직
 // 1. Keycloak 로그인 페이지로 이동
 // 이동 시 코드와 해싱 코드를 가지고 이동
@@ -17,11 +30,14 @@ import { api } from "@api/axiosInstance";
  * 3. 로그인 요청 시 codeChallenge와 함께 리다이렉트
  */
 export const loginWithKeycloak = async () => {
+  clearAuthGarbage();
+  sessionStorage.clear();
+
   const codeVerifier = generateCodeVerifier();
   const codeChallenge = await generateCodeChallenge(codeVerifier);
   const state = crypto.randomUUID();
 
-  // PKCE를 위해 verifier와 state 임시 저장
+  // 청소가 끝난 이후에 새로운 PKCE 데이터를 저장 (순서 중요)
   sessionStorage.setItem("code_verifier", codeVerifier);
   sessionStorage.setItem("oauth_state", state);
 
@@ -41,15 +57,15 @@ export const loginWithKeycloak = async () => {
 /** Keycloak 콜백 처리
  * 1. code, state를 URL에서 가져와서 session에 있는 것과 비교
  * 2. 백엔드에 액세스 코드 전달
- *    // 2-1. user/me에 api 요청 후 404 에러 반환 시 join
- *    // 2-2. join 시 닉네임과 액세스 코드만 가지고 요청
- *    // 2-3. 가입 완료 시 다시 user/me 부르기 (사용자는 모르게 동작)
+ * // 2-1. user/me에 api 요청 후 404 에러 반환 시 join
+ * // 2-2. join 시 닉네임과 액세스 코드만 가지고 요청
+ * // 2-3. 가입 완료 시 다시 user/me 부르기 (사용자는 모르게 동작)
  */
 export const handleAuthCallback = async (code: string, state: string) => {
   const savedState = sessionStorage.getItem("oauth_state");
   const codeVerifier = sessionStorage.getItem("code_verifier");
 
-  // 중복 요청을 위해 시작하자마자 세션 데이터 삭제
+  // 중복 요청 및 재사용을 막기 위해 꺼낸 즉시 세션에서 삭제
   sessionStorage.removeItem("code_verifier");
   sessionStorage.removeItem("oauth_state");
 
@@ -65,6 +81,7 @@ export const handleAuthCallback = async (code: string, state: string) => {
     const tokenRes = await api.post(`/api/auth/callback`, {
       code,
       codeVerifier,
+      // redirectUri: import.meta.env.VITE_KEYCLOAK_REDIRECT_URI,
     });
     const { accessToken } = tokenRes.data;
 
@@ -89,6 +106,8 @@ export const handleAuthCallback = async (code: string, state: string) => {
     }
   } catch (error) {
     console.error("인증 에러", error);
+
+    clearAuthGarbage();
     throw error;
   }
 };
