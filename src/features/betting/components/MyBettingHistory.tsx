@@ -14,7 +14,7 @@ export default function MyBettingHistory() {
     const fetchBettingHistory = async () => {
       try {
         const res = await getMyBettingHistory();
-        setBettingHistory(res || []);
+        setBettingHistory(res);
       } catch (e) {
         console.error("배팅 기록 불러오기 실패", e);
         setBettingHistory([]);
