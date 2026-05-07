@@ -8,7 +8,7 @@ import IntroAnimation from "@/features/landing/components/IntroAnimation";
 import { AttendanceCheckModal } from "@/components/modal/AttendanceCheckModal";
 
 export default function Home() {
-  const { user } = useAuthStore();
+  const { user, updateUser } = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // 세션 storage에 'visited' 기록이 있으면 바로 false, 없으면 true
@@ -46,7 +46,10 @@ export default function Home() {
     }
   }, [user, isLanding]); // user나 isLanding이 변할 때마다 체크
 
-  const closeModal = () => setIsModalOpen(false);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    updateUser({ checkPoint: 0 });
+  };
 
   return (
     <div className="relative w-full overflow-hidden">

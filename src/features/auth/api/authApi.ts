@@ -127,7 +127,7 @@ export const postSingUp = async (nickname: string) => {
   const userRes = await getUserInfo();
   useAuthStore.getState().setUser(userRes.data);
 
-  return userRes.data;
+  return userRes;
 };
 
 // 닉네임 변경 로직

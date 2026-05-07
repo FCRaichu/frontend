@@ -1,4 +1,4 @@
-import type { Game } from "../features/game/types/game";
+import type { Game } from "@/features/game/types/game";
 
 // 포스트 조회 시
 export interface Post {
@@ -16,7 +16,7 @@ export interface Post {
 // 포스트 작성 시
 export interface PostRequest {
   gameId: number;
-  userId: number;
+  userId: string;
   title: string;
   content: string;
   images: File[]; // 나중에 file로 바꾸기

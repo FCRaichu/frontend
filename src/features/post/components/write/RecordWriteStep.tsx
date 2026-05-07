@@ -207,14 +207,16 @@ export default function RecordWriteStep() {
           title: trimmedTitle,
           content: trimmedContent,
           gameId: selectedGameId,
-          userId: Number(user?.id),
+          userId: String(user?.id),
           images: imageFiles,
         } as PostRequest);
       }
 
       // 캐시 날리고 최신 데이터 불러오기
       await queryClient.invalidateQueries({ queryKey: ["myPosts"] });
-      await queryClient.invalidateQueries({ queryKey: ["userPosts", user?.id] });
+      await queryClient.invalidateQueries({
+        queryKey: ["userPosts", user?.id],
+      });
       await queryClient.invalidateQueries({ queryKey: ["post", postId] });
 
       alert(
@@ -236,8 +238,7 @@ export default function RecordWriteStep() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full max-w-5xl mx-auto pt-2 flex flex-col gap-10"
-    >
+      className="w-full max-w-5xl mx-auto pt-2 flex flex-col gap-10">
       <div className="flex flex-col lg:flex-row gap-12">
         {/* 왼쪽 섹션: 텍스트 입력 */}
         <div className="flex-1 flex flex-col gap-8">
@@ -248,8 +249,7 @@ export default function RecordWriteStep() {
               <Typography
                 variant="body-lg"
                 color="text-textMain"
-                className="font-bold!"
-              >
+                className="font-bold!">
                 제목
               </Typography>
             </div>
@@ -269,8 +269,7 @@ export default function RecordWriteStep() {
               <Typography
                 variant="body-lg"
                 color="text-textMain"
-                className="font-bold!"
-              >
+                className="font-bold!">
                 직관 후기
               </Typography>
             </div>
@@ -290,8 +289,7 @@ export default function RecordWriteStep() {
       isSubmitDisabled
         ? "bg-gray-300 text-white cursor-not-allowed"
         : "bg-primary text-white hover:bg-hover cursor-pointer"
-    }`}
-          >
+    }`}>
             {isEditMode ? "수정 완료" : "저장하기"}
           </button>
 
@@ -299,8 +297,7 @@ export default function RecordWriteStep() {
             type="button"
             onClick={() => navigate(-1)}
             className="shrink-0 flex items-center mt-8 gap-2 
-            text-disabledGray hover:text-secondary transition-colors font-bold text-lg cursor-pointer"
-          >
+            text-disabledGray hover:text-secondary transition-colors font-bold text-lg cursor-pointer">
             <span className="text-xl">←</span> 이전으로
           </button>
         </div>
@@ -312,8 +309,7 @@ export default function RecordWriteStep() {
             <Typography
               variant="body-lg"
               color="text-textMain"
-              className="font-bold!"
-            >
+              className="font-bold!">
               직관 사진{" "}
               <span className="text-sm text-gray-400">
                 ({existingImages.length + imageFiles.length}/4)
@@ -326,8 +322,7 @@ export default function RecordWriteStep() {
               {existingImages.map((img, i) => (
                 <div
                   key={`ex-${i}`}
-                  className="relative aspect-square bg-gray-200 rounded-xl overflow-hidden border"
-                >
+                  className="relative aspect-square bg-gray-200 rounded-xl overflow-hidden border">
                   <img
                     src={`${import.meta.env.VITE_IMAGE_BASE_URL}${img}`}
                     className="w-full h-full object-cover"
@@ -336,8 +331,7 @@ export default function RecordWriteStep() {
                   <button
                     type="button"
                     onClick={() => removeExistingImage(i)}
-                    className="absolute top-1 right-1 text-red-500 bg-white rounded-full shadow-md"
-                  >
+                    className="absolute top-1 right-1 text-red-500 bg-white rounded-full shadow-md">
                     <IoCloseCircle size={24} />
                   </button>
                 </div>
@@ -345,8 +339,7 @@ export default function RecordWriteStep() {
               {previews.map((url, i) => (
                 <div
                   key={`new-${i}`}
-                  className="relative aspect-square bg-gray-200 rounded-xl overflow-hidden border-2 border-primary"
-                >
+                  className="relative aspect-square bg-gray-200 rounded-xl overflow-hidden border-2 border-primary">
                   <img
                     src={url}
                     className="w-full h-full object-cover"
@@ -355,8 +348,7 @@ export default function RecordWriteStep() {
                   <button
                     type="button"
                     onClick={() => removeNewImage(i)}
-                    className="absolute top-1 right-1 text-red-500 bg-white rounded-full shadow-md"
-                  >
+                    className="absolute top-1 right-1 text-red-500 bg-white rounded-full shadow-md">
                     <IoCloseCircle size={24} />
                   </button>
                 </div>
@@ -366,8 +358,7 @@ export default function RecordWriteStep() {
               }).map((_, i) => (
                 <div
                   key={`empty-${i}`}
-                  className="aspect-square bg-gray-100 rounded-xl border border-dashed border-gray-300 flex items-center justify-center text-gray-300 text-xs"
-                >
+                  className="aspect-square bg-gray-100 rounded-xl border border-dashed border-gray-300 flex items-center justify-center text-gray-300 text-xs">
                   IMAGE
                 </div>
               ))}
@@ -386,8 +377,7 @@ export default function RecordWriteStep() {
               type="button"
               disabled={existingImages.length + imageFiles.length >= 4}
               onClick={() => fileInputRef.current?.click()}
-              className="w-full py-4 bg-white border border-gray-300 rounded-xl flex items-center justify-center gap-2 text-gray-400 hover:text-primary hover:border-hover transition-all group cursor-pointer"
-            >
+              className="w-full py-4 bg-white border border-gray-300 rounded-xl flex items-center justify-center gap-2 text-gray-400 hover:text-primary hover:border-hover transition-all group cursor-pointer">
               <HiPlus className="text-2xl transition-transform" />
               {existingImages.length + imageFiles.length >= 4 && (
                 <span className="text-sm">최대 갯수 도달</span>
