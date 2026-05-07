@@ -51,11 +51,11 @@ export default function Header() {
   return (
     <header
       className={`w-full border-b ${headerBorder} ${headerBg} sticky top-0 z-100`}>
-      <nav className="flex flex-row items-center justify-between w-full h-16 px-4 md:px-10 mx-auto">
-        <div className="flex items-center gap-4 md:gap-10">
-          {/* 모바일 햄버거 버튼 */}
+      <nav className="flex flex-row items-center justify-between w-full h-16 px-4 md:px-6 lg:px-10 mx-auto">
+        <div className="flex items-center gap-4 lg:gap-8">
+          {/* 모바일 및 태블릿 햄버거 버튼 (1024px 미만 노출) */}
           <button
-            className="block md:hidden text-2xl"
+            className="block lg:hidden text-2xl"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             {isMobileMenuOpen ? (
               <LuX />
@@ -64,27 +64,27 @@ export default function Header() {
             )}
           </button>
 
-          <Link to="/" className="flex items-center">
+          <Link to="/" className="flex items-center shrink-0">
             <img
               src={fcseoul_logo}
               alt="fcseoul_logo"
-              className="h-6 md:h-8 w-auto"
+              className="h-6 md:h-7 lg:h-8 w-auto"
             />
           </Link>
 
-          {/* 데스크탑 메뉴 & 모바일 드롭다운 메뉴 */}
+          {/* 데스크탑 메뉴 & 모바일/태블릿 드롭다운 */}
           <ul
             className={`
-            fixed md:static top-16 left-0 w-full md:w-auto 
-            flex flex-col md:flex-row items-center gap-6 md:gap-8 
-            p-8 md:p-0 transition-all duration-300
-            ${headerBg} ${isMobileMenuOpen ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 md:translate-y-0 md:opacity-100"}
-            border-b md:border-none ${headerBorder} z-[-1] md:z-auto
+            fixed lg:static top-16 left-0 w-full lg:w-auto 
+            flex flex-col lg:flex-row items-center gap-6 lg:gap-8 
+            px-8 pb-8 lg:p-0 transition-all duration-300
+            ${headerBg} ${isMobileMenuOpen ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 lg:translate-y-0 lg:opacity-100"}
+            border-b lg:border-none ${headerBorder} z-[-1] lg:z-auto
           `}>
             <li>
               <NavLink
                 to="/"
-                className={`italic text-primary text-lg md:text-xl font-black`}>
+                className={`italic text-primary text-lg lg:text-xl font-black whitespace-nowrap`}>
                 MY FC SEOUL
               </NavLink>
             </li>
@@ -114,18 +114,14 @@ export default function Header() {
                 나의 직관 기록
               </NavLink>
             </li>
-            <li className="md:hidden lg:block">
-              {" "}
-              {/* 공간 부족 시 태블릿에서 숨김 가능 */}
+            <li>
               <NavLink
                 to="/donation"
                 className={({ isActive }) => getNavItemStyle(isActive)}>
                 후원하기
               </NavLink>
             </li>
-            <li className="md:hidden lg:block">
-              {" "}
-              {/* 공간 부족 시 태블릿에서 숨김 가능 */}
+            <li>
               <NavLink
                 to="/betting"
                 className={({ isActive }) => getNavItemStyle(isActive)}>
@@ -133,7 +129,7 @@ export default function Header() {
               </NavLink>
             </li>
             {user?.role === "ADMIN" && (
-              <li className="md:hidden lg:block">
+              <li>
                 <NavLink
                   to="/admin"
                   className={({ isActive }) => getNavItemStyle(isActive)}>
@@ -146,7 +142,7 @@ export default function Header() {
 
         {/* 우측 유저 섹션 */}
         <div
-          className="flex items-center gap-3 md:gap-5 text-body-sm md:text-body-md"
+          className="flex items-center gap-2 md:gap-5 text-body-sm md:text-body-md shrink-0"
           ref={modalRef}>
           {user ? (
             <div className="flex items-center gap-1 md:gap-2 text-textSub relative">
