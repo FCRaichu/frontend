@@ -44,7 +44,7 @@ api.interceptors.response.use(
           {},
           {
             headers: {
-              Authorization: `Bearer ${accessToken}`, // header에 담아서 전달
+              "X-Expired-AccessToken": `Bearer ${accessToken}`, // header에 담아서 전달
             },
           },
         );
