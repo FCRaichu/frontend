@@ -1,5 +1,6 @@
 import { useAuthStore } from "@/stores/useAuthStore";
 import { api } from "@api/axiosInstance";
+import axios from "axios";
 
 // 로그인 전후 잔여 데이터(토큰, 쿠키) 청소 유틸리티
 const clearAuthGarbage = () => {
@@ -31,7 +32,8 @@ const clearAuthGarbage = () => {
  */
 export const loginWithKeycloak = async () => {
   clearAuthGarbage();
-  sessionStorage.clear();
+  sessionStorage.removeItem("code_verifier");
+  sessionStorage.removeItem("oauth_state");
 
   const codeVerifier = generateCodeVerifier();
   const codeChallenge = await generateCodeChallenge(codeVerifier);
@@ -77,12 +79,11 @@ export const handleAuthCallback = async (code: string, state: string) => {
   }
 
   try {
-    // 키클락에서 액세스 토큰 받아오기
-    const tokenRes = await api.post(`/api/auth/callback`, {
-      code,
-      codeVerifier,
-      // redirectUri: import.meta.env.VITE_KEYCLOAK_REDIRECT_URI,
-    });
+    // 만료된 토큰을 보내는 걸 방지하기 위해서 plain axios 사용
+    const tokenRes = await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/auth/callback`,
+      { code, codeVerifier },
+    );
     const { accessToken } = tokenRes.data;
 
     // 토큰을 zustand에 저장

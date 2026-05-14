@@ -27,7 +27,7 @@ export default function Login() {
           const result = await handleAuthCallback(code, state);
 
           if (result.status === "SUCCESS") {
-            // 로그인 성공 시 베팅 결과 뿌려주는 api 호출
+            // 확인 안 한 배팅 정산 결과 조회 → sessionStorage에 저장 (Home에서 모달로 표시)
             try {
               const unreadBettings = await getMyUnreadBetting();
 
