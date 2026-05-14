@@ -140,6 +140,7 @@ api.interceptors.response.use(
         // 갱신된 토큰으로 원래 실패했던 요청 다시 보내기
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return api(originalRequest);
+
       } catch (refreshError) {
         // 3-5. Refresh도 실패 (리프레시 토큰 만료) → 강제 로그아웃
         isRefreshing = false;

@@ -2,10 +2,7 @@ import {
   handleAuthCallback,
   loginWithKeycloak,
 } from "@/features/auth/api/authApi";
-import {
-  getMyUnreadBetting,
-  putMyUnreadBetting,
-} from "@/features/betting/api/betting";
+import { getMyUnreadBetting } from "@/features/betting/api/betting";
 
 import { useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -30,17 +27,11 @@ export default function Login() {
             // 확인 안 한 배팅 정산 결과 조회 → sessionStorage에 저장 (Home에서 모달로 표시)
             try {
               const unreadBettings = await getMyUnreadBetting();
-
               if (unreadBettings?.length > 0) {
-                // 유효 ID 필터링
-                const ids = unreadBettings
-                  .map((bet: any) => bet.id)
-                  .filter(Boolean); // null, undefined, 0 등 제거
-
-                // 실제 데이터 존재 시에만 전송
-                if (ids.length > 0) {
-                  await putMyUnreadBetting(ids);
-                }
+                sessionStorage.setItem(
+                  "unreadBettings",
+                  JSON.stringify(unreadBettings),
+                );
               }
             } catch (error) {
               console.error("베팅 정산 확인 중 오류:", error);

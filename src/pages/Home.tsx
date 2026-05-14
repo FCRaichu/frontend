@@ -6,18 +6,15 @@ import { Ranking } from "@/features/ranking/components/Ranking";
 import { MyRecords } from "@/features/post/components/list/MyPosts";
 import IntroAnimation from "@/features/landing/components/IntroAnimation";
 import { AttendanceCheckModal } from "@/components/modal/AttendanceCheckModal";
-
+import { BettingSettlementModal } from "@/components/modal/BettingSettlementModal";
 import { putMyUnreadBetting } from "@/features/betting/api/betting";
 import type { BettingHistoryItem } from "@/features/betting/types/betting";
-import { BettingSettlementModal } from "@/components/modal/BettingSettlementModal";
 
 export default function Home() {
   const { user, updateUser } = useAuthStore();
   const [isAttendanceModalOpen, setIsAttendanceModalOpen] = useState(false);
   const [isBettingModalOpen, setIsBettingModalOpen] = useState(false);
-  const [unreadBettings, setUnreadBettings] = useState<BettingHistoryItem[]>(
-    [],
-  );
+  const [unreadBettings, setUnreadBettings] = useState<BettingHistoryItem[]>([]);
 
   // 세션 storage에 'visited' 기록이 있으면 바로 false, 없으면 true
   const [isLanding, setIsLanding] = useState(
