@@ -103,7 +103,6 @@ api.interceptors.response.use(
 
     // 401 (액세스 토큰 만료 에러) - _retry 꼬리표로 무한 루프 방지
     if (error.response?.status === 401 && !originalRequest._retry) {
-
       // 3-2. 누군가 이미 갱신 중 → 대기실 입장 (새 토큰 또는 에러 수신 대기)
       if (isRefreshing) {
         // 재시도 후 또 401이 와도 refresh 루프 재진입 방지
@@ -141,7 +140,6 @@ api.interceptors.response.use(
         // 갱신된 토큰으로 원래 실패했던 요청 다시 보내기
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return api(originalRequest);
-
       } catch (refreshError) {
         // 3-5. Refresh도 실패 (리프레시 토큰 만료) → 강제 로그아웃
         isRefreshing = false;

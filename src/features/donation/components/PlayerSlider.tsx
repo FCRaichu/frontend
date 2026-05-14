@@ -49,16 +49,14 @@ export default function PlayerSlider() {
           loopAdditionalSlides={5}
           allowTouchMove={true}
           observer={true}
-          className="continuous-swiper"
-        >
+          className="continuous-swiper">
           {players.map((player) => (
             <SwiperSlide key={player.id}>
               <div
                 onClick={() => setSelectedPlayer(player)}
                 className="relative aspect-3/4 cursor-pointer overflow-hidden group 
                shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:shadow-[0_30px_60px_rgba(0,0,0,0.5)] 
-               transition-all duration-500"
-              >
+               transition-all duration-500">
                 {/* 이미지 */}
                 <img
                   src={`${import.meta.env.VITE_IMAGE_BASE_URL}${player.image}`}
@@ -89,8 +87,7 @@ export default function PlayerSlider() {
                           .map(([rankKey, userName], index) => (
                             <div
                               key={rankKey}
-                              className="flex items-center gap-2 bg-black/40 px-2 py-1 rounded-sm border-l-2 border-primary"
-                            >
+                              className="flex items-center gap-2 bg-black/40 px-2 py-1 rounded-sm border-l-2 border-primary">
                               <span className="text-primary font-black text-xs italic">
                                 {index + 1}ST
                               </span>

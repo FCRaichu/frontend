@@ -31,13 +31,18 @@ export default function Login() {
             try {
               const unreadBettings = await getMyUnreadBetting();
 
-              if (unreadBettings && unreadBettings.length > 0) {
-                // 확인하지 않은 ID들만 모아서 PUT 호출
-                const ids = unreadBettings.map((bet: any) => bet.id);
-                await putMyUnreadBetting(ids);
+              if (unreadBettings?.length > 0) {
+                // 유효 ID 필터링
+                const ids = unreadBettings
+                  .map((bet: any) => bet.id)
+                  .filter(Boolean); // null, undefined, 0 등 제거
+
+                // 실제 데이터 존재 시에만 전송
+                if (ids.length > 0) {
+                  await putMyUnreadBetting(ids);
+                }
               }
             } catch (error) {
-              // 베팅 API 에러가 로그인 흐름을 방해하지 않도록 예외 처리
               console.error("베팅 정산 확인 중 오류:", error);
             }
 
