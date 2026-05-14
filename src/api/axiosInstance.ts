@@ -21,7 +21,7 @@
  * - 문을 열고 (`isRefreshing = false`), 대기실(`onRefreshed`)에 있던 모든 API들에게 새 토큰을 쥐여주고 일제히 재출발시킴.
  * - 문을 잠갔던 본 요청도 새 토큰으로 바꿔 달고 다시 출발.
  * * 3-5. Refresh 실패 시 (리프레시 토큰마저 만료된 경우)
- * - 문을 열고 대기실 폭파 (`refreshSubscribers = []`).
+ * - 문을 열고 대기실 폭파 (`onRefreshFailed` → refreshSubscribers = []).
  * - Zustand 스토어 비우기 및 로그인 페이지로 강제 추방.
  * ============================================================================
  */
@@ -31,28 +31,56 @@ import axios from "axios";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  timeout: 5000, // 응답 대기 5초
+  timeout: 5000,
 });
 
-// 다중 요청 제어 상태
-let isRefreshing = false;
-let refreshSubscribers: ((token: string) => void)[] = [];
+// ─── 다중 요청 제어 상태 ───────────────────────────────────────────────────────
 
-// 대기 큐 실행 및 비우기
+let isRefreshing = false;
+
+// resolve/reject 쌍으로 관리 → Refresh 실패 시에도 대기 중인 요청들을 올바르게 reject 가능
+let refreshSubscribers: Array<{
+  resolve: (token: string) => void;
+  reject: (error: unknown) => void;
+}> = [];
+
+// 대기 큐 실행 (Refresh 성공): 모든 대기 요청에 새 토큰 전달 후 큐 비우기
 const onRefreshed = (token: string) => {
-  refreshSubscribers.forEach((callback) => callback(token));
+  refreshSubscribers.forEach(({ resolve }) => resolve(token));
   refreshSubscribers = [];
 };
 
-// 대기 큐 추가
-const addRefreshSubscriber = (callback: (token: string) => void) => {
-  refreshSubscribers.push(callback);
+// 대기 큐 폭파 (Refresh 실패): 모든 대기 요청을 에러로 reject 후 큐 비우기
+const onRefreshFailed = (error: unknown) => {
+  refreshSubscribers.forEach(({ reject }) => reject(error));
+  refreshSubscribers = [];
 };
+
+// 대기 큐 추가: 새 토큰 또는 에러를 전달받을 콜백 등록
+const addRefreshSubscriber = (
+  resolve: (token: string) => void,
+  reject: (error: unknown) => void,
+) => {
+  refreshSubscribers.push({ resolve, reject });
+};
+
+// 로컬 인증 상태 초기화 (logout API 호출 없이 스토어만 비움)
+// → Refresh 실패 시 logout()을 호출하면 /api/auth/logout 요청이 또 401을 맞아 재귀 발생하므로 직접 setState 사용
+const clearLocalAuth = () => {
+  useAuthStore.setState({
+    user: null,
+    accessToken: null,
+    tokenType: null,
+    refreshToken: null,
+  });
+};
+
+// ─── Request 인터셉터 ──────────────────────────────────────────────────────────
 
 // 서버로 요청을 "보내기" 전에 인터셉트!
 api.interceptors.request.use(
   (config) => {
-    // zustand 스토어에 저장되어 있는 최신 토큰을 가져옴.
+    // Zustand 스토어에 저장되어 있는 최신 토큰을 가져옴
     const { accessToken, tokenType } = useAuthStore.getState();
 
     // 토큰 있으면? 헤더에 실어줌 (비어있거나 'undefined' 문자열인 경우 방지)
@@ -60,68 +88,73 @@ api.interceptors.request.use(
       config.headers.Authorization = `${tokenType || "Bearer"} ${accessToken}`;
     }
 
-    // 요청 보냄
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  },
+  (error) => Promise.reject(error),
 );
 
-// Response 인터셉터: 401(만료) 및 404(미가입) 처리
+// ─── Response 인터셉터 ─────────────────────────────────────────────────────────
+
+// Response 인터셉터: 401(만료) 및 기타 에러 처리
 api.interceptors.response.use(
   (response) => response, // 성공 시 그대로 반환
   async (error) => {
     const originalRequest = error.config;
 
-    // 401 (액세스 토큰 만료 에러)
+    // 401 (액세스 토큰 만료 에러) - _retry 꼬리표로 무한 루프 방지
     if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
 
-      // 갱신 중 대기 처리
+      // 3-2. 누군가 이미 갱신 중 → 대기실 입장 (새 토큰 또는 에러 수신 대기)
       if (isRefreshing) {
-        return new Promise((resolve) => {
-          addRefreshSubscriber((token: string) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
-            resolve(api(originalRequest));
-          });
+        // 재시도 후 또 401이 와도 refresh 루프 재진입 방지
+        originalRequest._retry = true;
+        return new Promise<string>((resolve, reject) => {
+          addRefreshSubscriber(resolve, reject);
+        }).then((token) => {
+          originalRequest.headers.Authorization = `Bearer ${token}`;
+          return api(originalRequest);
         });
       }
 
-      // 갱신 잠금
+      // 3-3. 내가 처음 → _retry 꼬리표 달고 문 잠금
+      originalRequest._retry = true;
       isRefreshing = true;
 
       try {
         const { refreshToken, setAuth } = useAuthStore.getState();
 
-        // Refresh API 호출 (만료된 토큰 헤더 제외, 쿠키 포함)
+        // Refresh API 호출 (HttpOnly 쿠키의 리프레시 토큰 포함)
         const refreshRes = await axios.post(
           `${import.meta.env.VITE_API_URL}/api/auth/refresh`,
           {},
-          {
-            withCredentials: true,
-          },
+          { withCredentials: true },
         );
 
-        // Refresh 성공하여 새로운 액세스 토큰 받아오기
+        // 3-4. Refresh 성공 → 새 토큰 저장
         const { accessToken: newAccessToken } = refreshRes.data;
         setAuth(newAccessToken, "Bearer", refreshToken || "");
 
-        // 잠금 해제 및 대기 큐 실행
+        // 잠금 해제 및 대기실 전원 새 토큰으로 재출발
         isRefreshing = false;
         onRefreshed(newAccessToken);
 
         // 갱신된 토큰으로 원래 실패했던 요청 다시 보내기
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return api(originalRequest);
-      } catch (refreshError) {
-        // Refresh도 실패한 경우 (리프레시 토큰 만료) -> 강제 로그아웃
-        isRefreshing = false;
-        refreshSubscribers = [];
 
-        useAuthStore.getState().logout();
-        alert("로그인이 필요한 서비스입니다.");
-        window.location.href = "/login";
+      } catch (refreshError) {
+        // 3-5. Refresh도 실패 (리프레시 토큰 만료) → 강제 로그아웃
+        isRefreshing = false;
+        onRefreshFailed(refreshError);
+
+        // 로컬 상태만 초기화 (logout() 호출 시 재귀 방지 - 주석 위 clearLocalAuth 참고)
+        clearLocalAuth();
+
+        // 이미 로그인 페이지면 alert + 이동 중복 방지
+        if (!window.location.pathname.startsWith("/login")) {
+          alert("로그인이 필요한 서비스입니다.");
+          window.location.href = "/login";
+        }
 
         return Promise.reject(refreshError);
       }
