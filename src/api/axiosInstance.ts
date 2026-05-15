@@ -126,6 +126,11 @@ api.interceptors.response.use(
         const refreshRes = await axios.post(
           `${import.meta.env.VITE_API_URL}/api/auth/refresh`,
           {},
+          {
+            headers: {
+              "X-Expired-AccessToken": `Bearer ${accessToken}`, // header에 담아서 전달
+            },
+          },
           { withCredentials: true },
         );
 

@@ -113,9 +113,9 @@ export default function ActiveBettingForm({
   };
 
   return (
-    <div className="flex gap-6 w-full max-w-full mx-auto items-start">
+    <div className="flex flex-col lg:flex-row gap-6 w-full max-w-full mx-auto items-start">
       {/* 좌측: 배팅 현황 */}
-      <div className="flex-2 bg-white rounded-2xl shadow-sm border border-border p-8 flex flex-col gap-7 self-start">
+      <div className="flex-2 bg-white rounded-2xl shadow-sm border border-border p-4 sm:p-6 md:p-8 flex flex-col gap-5 md:gap-7 self-start w-full lg:w-auto">
         <div className="flex justify-between items-end border-b border-gray-100 pb-4">
           <div>
             <h3 className="font-bold text-lg text-textDark mb-1">
@@ -246,7 +246,7 @@ export default function ActiveBettingForm({
       </div>
 
       {/* 우측: 배팅 컨트롤 폼 */}
-      <div className="flex-1 bg-white rounded-2xl shadow-sm border border-border p-8 flex flex-col gap-6 h-fit">
+      <div className="flex-1 bg-white rounded-2xl shadow-sm border border-border p-4 sm:p-6 md:p-8 flex flex-col gap-4 md:gap-6 h-fit w-full lg:w-auto">
         <h3 className="font-bold text-xl">배팅하기</h3>
 
         <div className="relative">

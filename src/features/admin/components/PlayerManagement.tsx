@@ -115,8 +115,8 @@ export const PlayerManagement = () => {
         ) : players.length === 0 ? (
           <p className="text-gray-400">등록된 선수가 없습니다.</p>
         ) : (
-          <div className="max-h-[600px] overflow-y-auto border rounded">
-            <table className="w-full border-collapse text-sm">
+          <div className="max-h-[600px] overflow-auto border rounded">
+            <table className="w-full border-collapse text-sm min-w-[400px]">
               <thead className="bg-gray-50 sticky top-0">
                 <tr>
                   <th className="border-b p-2">사진</th>

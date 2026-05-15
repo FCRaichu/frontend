@@ -24,15 +24,15 @@ const Admin = () => {
   const currentContent = ADMIN_MENUS.find((m) => m.id === activeTab)?.component;
 
   return (
-    <div className="flex flex-col px-24 gap-5">
+    <div className="flex flex-col px-4 sm:px-8 md:px-16 lg:px-24 gap-5">
       <Typography variant="h1">관리자 페이지</Typography>
 
-      <div className="flex gap-2 mb-6 border-b pb-4">
+      <div className="flex flex-wrap gap-2 mb-6 border-b pb-4">
         {ADMIN_MENUS.map((menu) => (
           <button
             key={menu.id}
             onClick={() => setActiveTab(menu.id)}
-            className={`px-4 py-1.5 border rounded text-sm transition ${
+            className={`px-3 sm:px-4 py-1.5 border rounded text-xs sm:text-sm transition ${
               activeTab === menu.id
                 ? "bg-black text-white"
                 : "bg-white hover:bg-gray-50"

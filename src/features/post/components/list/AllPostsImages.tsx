@@ -66,7 +66,7 @@ export default function AllPostsImages({
   return (
     <div
       ref={containerRef}
-      className="flex flex-wrap gap-x-4 gap-y-56 items-start px-10 pb-40"
+      className="flex flex-wrap gap-x-2 sm:gap-x-3 md:gap-x-4 gap-y-24 sm:gap-y-40 md:gap-y-56 items-start px-4 sm:px-6 md:px-10 pb-20 md:pb-40"
     >
       {/* 정렬된 연도-월 키를 먼저 순회 */}
       {sortedKeys.map((key) => {
@@ -121,7 +121,7 @@ export default function AllPostsImages({
                       : `${import.meta.env.VITE_IMAGE_BASE_URL}${post.thumbnail}`
                   }
                   alt={post.title}
-                  className={`w-52 h-auto transition-transform duration-700 group-hover:scale-110`}
+                  className={`w-28 sm:w-36 md:w-44 lg:w-52 h-auto transition-transform duration-700 group-hover:scale-110`}
                 />
 
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center p-4">

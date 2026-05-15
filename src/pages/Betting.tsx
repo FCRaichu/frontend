@@ -46,7 +46,7 @@ export default function Betting() {
             gameDate={activeBettingData.gameDate}
             opponent={activeBettingData.opponent}
           />
-          <div className="w-full max-w-5xl flex flex-col gap-6 mt-6">
+          <div className="w-full max-w-5xl flex flex-col gap-6 mt-6 px-4 md:px-6">
             <ActiveBettingForm
               activeBettingData={activeBettingData}
               onBetSuccess={fetchActiveBetting}
