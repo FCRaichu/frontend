@@ -116,12 +116,12 @@ export default function DatePicker({
             className="px-4 py-4 w-full bg-light border-2 border-disabled 
           rounded-xl transition-all group-hover:border-primary"
           >
-            <p className="text-lg font-medium text-gray-800">
+            <p className="text-sm sm:text-base md:text-lg font-medium text-gray-800">
               {selectedGame ? (
                 <>
                   {formatDate(selectedGame.date)}{" "}
-                  <span className="mx-2">/</span> FC서울 VS{" "}
-                  {selectedGame.opponent} <span className="mx-2">/</span>{" "}
+                  <span className="mx-1 sm:mx-2">/</span> FC서울 VS{" "}
+                  {selectedGame.opponent} <span className="mx-1 sm:mx-2">/</span>{" "}
                   {selectedGame.stadium}
                 </>
               ) : (

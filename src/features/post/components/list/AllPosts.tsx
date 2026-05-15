@@ -161,48 +161,48 @@ export const AllPosts = () => {
   return (
     <>
       <div className="relative w-full min-h-screen pb-40">
-        <div className="sticky top-15 z-50 w-full flex justify-between items-center px-24 py-6 bg-background backdrop-blur-md shadow-sm">
-          <div className="flex flex-col items-start py-20 mr-60">
+        <div className="sticky top-15 z-50 w-full flex flex-col sm:flex-row justify-between items-start sm:items-center px-4 sm:px-10 md:px-16 lg:px-24 py-4 sm:py-6 bg-background backdrop-blur-md shadow-sm gap-3 sm:gap-0">
+          <div className="flex flex-col items-start sm:py-10 md:py-16 lg:py-20 sm:mr-20 md:mr-40 lg:mr-60">
             <Typography
               variant="display"
-              className="text-5xl! font-black tracking-tighter mb-4"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl! font-black tracking-tighter mb-2 md:mb-4"
             >
               나의 직관 기록 <span className="text-primary"> .</span>
             </Typography>
             <Typography
               variant="display"
-              className="text-5xl! font-black italic tracking-tighter mb-4"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl! font-black italic tracking-tighter mb-2 md:mb-4"
             >
               {currentYear}
             </Typography>
           </div>
 
           {/* 오른쪽에 승률이랑 직관 기록 작게 보여주기 */}
-          <div className="flex items-center gap-8 p-6 rounded-2xl shadow-sm">
-            <div className="relative w-32 h-32">
+          <div className="flex items-center gap-4 sm:gap-6 md:gap-8 p-3 sm:p-4 md:p-6 rounded-2xl shadow-sm">
+            <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32">
               <ReactECharts
                 option={chartOption}
                 style={{ height: "100%", width: "100%" }}
               />
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-xl font-black text-secondary">
+                <span className="text-base sm:text-lg md:text-xl font-black text-secondary">
                   {count}
                 </span>
-                <span className="text-[10px] font-bold text-gray-400 uppercase">
+                <span className="text-[8px] sm:text-[10px] font-bold text-gray-400 uppercase">
                   경기
                 </span>
               </div>
             </div>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1 sm:gap-2">
               <Typography
                 variant="body-sm"
-                className="font-bold! text-gray-400 mb-1"
+                className="font-bold! text-gray-400 mb-0.5 sm:mb-1 text-xs sm:text-sm"
               >
                 전체 승률{" "}
                 <span className="text-primary ml-1">{rate.winRate}%</span>
               </Typography>
-              <div className="flex gap-4">
+              <div className="flex gap-2 sm:gap-4">
                 <StatBadge
                   label="승"
                   value={rate.winRate.toString()}
@@ -223,7 +223,7 @@ export const AllPosts = () => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-24 mt-30 pb-40">
+        <div className="flex flex-col gap-12 md:gap-24 mt-16 md:mt-30 pb-20 md:pb-40">
           {sortedKeys.length > 0 ? (
             <AllPostsImages
               groupedPosts={groupedPosts}

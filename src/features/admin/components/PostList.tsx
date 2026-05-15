@@ -25,6 +25,7 @@ export const PostList = () => {
     return <p className="text-gray-400">등록된 게시글이 없습니다.</p>;
 
   return (
+    <div className="overflow-x-auto">
     <table className="w-full border-collapse border border-gray-300 text-sm">
       <thead className="bg-gray-50">
         <tr>
@@ -47,5 +48,6 @@ export const PostList = () => {
         ))}
       </tbody>
     </table>
+    </div>
   );
 };

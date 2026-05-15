@@ -131,8 +131,8 @@ export const GameManagement = () => {
               : `${selectedYear}년 경기가 없습니다.`}
           </p>
         ) : (
-          <div className="max-h-[600px] overflow-y-auto border rounded">
-            <table className="w-full border-collapse text-sm">
+          <div className="max-h-[600px] overflow-auto border rounded">
+            <table className="w-full border-collapse text-sm min-w-[500px]">
               <thead className="bg-gray-50 sticky top-0">
                 <tr>
                   <th className="border-b p-2">ID</th>

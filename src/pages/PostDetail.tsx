@@ -66,8 +66,8 @@ export default function PostDetail() {
   }
 
   return (
-    <div className="flex w-full h-[calc(100vh-64px)] bg-card overflow-hidden">
-      <div className="w-1/2 h-full flex flex-col overflow-hidden">
+    <div className="flex flex-col md:flex-row w-full md:h-[calc(100vh-64px)] bg-card overflow-hidden">
+      <div className="w-full md:w-1/2 md:h-full flex flex-col overflow-hidden">
         {/* 상단 경기 정보는 스크롤 없이 "고정"!! */}
         {gameData && (
           <div className="shrink-0">
@@ -80,22 +80,29 @@ export default function PostDetail() {
           </div>
         )}
 
+        {/* 모바일: 이미지 슬라이더를 텍스트 위에 표시 */}
+        {postData && postData.images?.length > 0 && (
+          <div className="block md:hidden w-full h-64 overflow-hidden">
+            <ImageSlider images={postData.images} />
+          </div>
+        )}
+
         {/* 본문 전체를 감싸는 상대 위치(relative) 컨테이너 */}
-        <div className="relative flex flex-col h-full pb-10 px-24 overflow-hidden">
+        <div className="relative flex flex-col md:h-full pb-6 md:pb-10 px-4 sm:px-10 md:px-16 lg:px-24 overflow-hidden">
           {/* 본문 내용만 스크롤!! */}
           <div
-            className="flex-1 overflow-y-auto scrollbar-hide pt-20 pb-10 
-                      mask-[linear-gradient(to_bottom,transparent_15%,black_20%,black_98%,transparent_100%)]">
+            className="flex-1 overflow-y-auto scrollbar-hide pt-8 md:pt-20 pb-6 md:pb-10
+                      md:mask-[linear-gradient(to_bottom,transparent_15%,black_20%,black_98%,transparent_100%)]">
             {postData && (
-              <div className="flex flex-col gap-20">
-                <Typography variant="h1" color="text-secondary">
+              <div className="flex flex-col gap-8 md:gap-20">
+                <Typography variant="h1" color="text-secondary" className="text-xl sm:text-2xl md:text-3xl">
                   {postData?.title}
                 </Typography>
 
                 <Typography
                   variant="body-lg"
                   color="font-medium! text-secondary"
-                  className="whitespace-pre-wrap leading-relaxed">
+                  className="whitespace-pre-wrap leading-relaxed text-sm md:text-base">
                   {postData?.content}
                 </Typography>
               </div>
@@ -103,16 +110,16 @@ export default function PostDetail() {
           </div>
 
           {/* 이전으로 버튼도 고정!! */}
-          <div className="shrink-0 flex items-center justify-between mt-8 border-t border-border pt-6">
+          <div className="shrink-0 flex items-center justify-between mt-4 md:mt-8 border-t border-border pt-4 md:pt-6">
             {/* 왼쪽: 이전으로 */}
             <button
               onClick={() => navigate(-1)}
-              className="flex items-center gap-2 text-disabledGray hover:text-secondary transition-colors font-bold text-lg cursor-pointer">
-              <span className="text-xl">←</span> 이전으로
+              className="flex items-center gap-2 text-disabledGray hover:text-secondary transition-colors font-bold text-base md:text-lg cursor-pointer">
+              <span className="text-lg md:text-xl">←</span> 이전으로
             </button>
 
             {String(user?.id) === String(userId) && (
-              <div className="flex items-center gap-6">
+              <div className="flex items-center gap-4 md:gap-6">
                 <button
                   onClick={handleEdit}
                   className="text-disabledGray hover:text-primary transition-colors font-bold text-lg cursor-pointer">
@@ -129,9 +136,9 @@ export default function PostDetail() {
         </div>
       </div>
 
-      {/* 우측 이미지 슬라이더 */}
+      {/* 우측 이미지 슬라이더 - 데스크탑만 */}
       {postData && (
-        <div className="w-1/2 h-full overflow-hidden">
+        <div className="hidden md:block md:w-1/2 md:h-full overflow-hidden">
           <ImageSlider images={postData.images} />
         </div>
       )}

@@ -238,7 +238,7 @@ export default function RecordWriteStep() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full max-w-5xl mx-auto pt-2 flex flex-col gap-10">
+      className="w-full max-w-5xl mx-auto pt-2 flex flex-col gap-6 md:gap-10 pb-10">
       <div className="flex flex-col lg:flex-row gap-12">
         {/* 왼쪽 섹션: 텍스트 입력 */}
         <div className="flex-1 flex flex-col gap-8">
