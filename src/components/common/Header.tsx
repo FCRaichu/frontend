@@ -53,7 +53,7 @@ export default function Header() {
       className={`w-full border-b ${headerBorder} ${headerBg} sticky top-0 z-100`}>
       <nav className="flex flex-row items-center justify-between w-full h-16 px-4 md:px-6 lg:px-10 mx-auto">
         <div className="flex items-center gap-4 lg:gap-8">
-          {/* 모바일 및 태블릿 햄버거 버튼 (1024px 미만 노출) */}
+          {/* 모바일 및 태블릿 햄버거 버튼 */}
           <button
             className="block lg:hidden text-2xl"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>

@@ -6,10 +6,15 @@ import { Ranking } from "@/features/ranking/components/Ranking";
 import { MyRecords } from "@/features/post/components/list/MyPosts";
 import IntroAnimation from "@/features/landing/components/IntroAnimation";
 import { AttendanceCheckModal } from "@/components/modal/AttendanceCheckModal";
+import { BettingSettlementModal } from "@/components/modal/BettingSettlementModal";
+import { putMyUnreadBetting } from "@/features/betting/api/betting";
+import type { BettingHistoryItem } from "@/features/betting/types/betting";
 
 export default function Home() {
   const { user, updateUser } = useAuthStore();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAttendanceModalOpen, setIsAttendanceModalOpen] = useState(false);
+  const [isBettingModalOpen, setIsBettingModalOpen] = useState(false);
+  const [unreadBettings, setUnreadBettings] = useState<BettingHistoryItem[]>([]);
 
   // 세션 storage에 'visited' 기록이 있으면 바로 false, 없으면 true
   const [isLanding, setIsLanding] = useState(
@@ -37,18 +42,45 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    // 인트로가 끝나고 메인 화면이 보일 때 모달 체크
-    // checkPoint가 0보다 크면 오늘 처음 로그인 한 것!
     if (isLanding === false && user) {
+      // sessionStorage에서 미확인 배팅 정산 결과 불러오기
+      const stored = sessionStorage.getItem("unreadBettings");
+      const bettings: BettingHistoryItem[] = stored ? JSON.parse(stored) : [];
+      if (bettings.length > 0) setUnreadBettings(bettings);
+
+      // checkPoint > 0 이면 오늘 첫 출석 → 출석 모달 먼저
       if (user.checkPoint > 0) {
-        setIsModalOpen(true);
+        setIsAttendanceModalOpen(true);
+      } else if (bettings.length > 0) {
+        // 출석 모달 없으면 배팅 정산 모달 바로 표시
+        setIsBettingModalOpen(true);
       }
     }
-  }, [user, isLanding]); // user나 isLanding이 변할 때마다 체크
+  }, [user, isLanding]);
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  const closeAttendanceModal = () => {
+    setIsAttendanceModalOpen(false);
     updateUser({ checkPoint: 0 });
+    // 출석 모달 닫힌 후 미확인 배팅 있으면 배팅 정산 모달 표시
+    if (unreadBettings.length > 0) {
+      setIsBettingModalOpen(true);
+    }
+  };
+
+  const closeBettingModal = async () => {
+    setIsBettingModalOpen(false);
+    const ids = unreadBettings
+      .map((b) => b.betHistoryId)
+      .filter((id) => id != null);
+    if (ids.length > 0) {
+      try {
+        await putMyUnreadBetting(ids);
+      } catch (e) {
+        console.error("배팅 정산 확인 처리 실패", e);
+      }
+    }
+    sessionStorage.removeItem("unreadBettings");
+    setUnreadBettings([]);
   };
 
   return (
@@ -72,11 +104,18 @@ export default function Home() {
         {/* 직관왕 / 승률왕 */}
         <Ranking />
 
-        {isModalOpen && (
+        {isAttendanceModalOpen && (
           <AttendanceCheckModal
             point={user?.checkPoint || 0}
             streak={user?.attendanceStreak || 0}
-            onClose={closeModal}
+            onClose={closeAttendanceModal}
+          />
+        )}
+
+        {isBettingModalOpen && unreadBettings.length > 0 && (
+          <BettingSettlementModal
+            bettings={unreadBettings}
+            onClose={closeBettingModal}
           />
         )}
       </main>

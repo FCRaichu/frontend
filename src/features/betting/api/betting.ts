@@ -33,6 +33,6 @@ export const getMyUnreadBetting = async () => {
 
 // PUT: 확인하지 않은 배팅 정산 결과를 확인 처리
 export const putMyUnreadBetting = async (Ids: number[]) => {
-  const res = await api.put(`api/bet/unread/check`, { Ids });
+  const res = await api.put(`api/bet/unread/check`, { betHistoryIds: Ids });
   return res.data;
 };
