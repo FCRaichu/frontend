@@ -120,7 +120,7 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const { refreshToken, setAuth } = useAuthStore.getState();
+        const { accessToken, refreshToken, setAuth } = useAuthStore.getState();
 
         // Refresh API 호출 (HttpOnly 쿠키의 리프레시 토큰 포함)
         const refreshRes = await axios.post(
@@ -130,8 +130,8 @@ api.interceptors.response.use(
             headers: {
               "X-Expired-AccessToken": `Bearer ${accessToken}`, // header에 담아서 전달
             },
+            withCredentials: true,
           },
-          { withCredentials: true },
         );
 
         // 3-4. Refresh 성공 → 새 토큰 저장
