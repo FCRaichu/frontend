@@ -33,8 +33,8 @@ export const GameManagement = () => {
   const [mode, setMode] = useState<Mode>("none");
 
   const [selectedYear, setSelectedYear] = useState<string>(
-  String(new Date().getFullYear()),
-);
+    String(new Date().getFullYear()),
+  );
 
   useEffect(() => {
     fetchGames();
@@ -131,8 +131,8 @@ export const GameManagement = () => {
               : `${selectedYear}년 경기가 없습니다.`}
           </p>
         ) : (
-          <div className="max-h-[600px] overflow-auto border rounded">
-            <table className="w-full border-collapse text-sm min-w-[500px]">
+          <div className="max-h-150 overflow-auto border rounded">
+            <table className="w-full border-collapse text-sm min-w-125">
               <thead className="bg-gray-50 sticky top-0">
                 <tr>
                   <th className="border-b p-2">ID</th>
@@ -155,7 +155,9 @@ export const GameManagement = () => {
                       }`}>
                       <td className="border-b p-2">{g.id}</td>
                       <td className="border-b p-2">{g.round}</td>
-                      <td className="border-b p-2">{formatShortDate(g.date)}</td>
+                      <td className="border-b p-2">
+                        {formatShortDate(g.date)}
+                      </td>
                       <td className="border-b p-2">{g.homeTeam}</td>
                       <td className="border-b p-2">{g.awayTeam}</td>
                       <td className="border-b p-2">

@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { getAllGames } from "@/features/game/api/gameApi";
 import { getMyAllPosts } from "../../api/postApi";
-import Typography from "@/components/common/Typography";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate, formatGameDateTime } from "@/utils/formatDate";
 
 import { LuCalendarDays } from "react-icons/lu";
 
@@ -103,31 +102,38 @@ export default function DatePicker({
 
   return (
     <>
-      <div className="w-full max-w-5xl mb-8">
-        <div className="flex items-center gap-2 mb-4">
-          <LuCalendarDays className="text-primary text-xl" />
-          <Typography variant="h3" color="text-subText" className="font-bold!">
+      <div className="w-full max-w-5xl mb-4 md:mb-8">
+        <div className="flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3 md:mb-4">
+          <LuCalendarDays className="text-primary text-base sm:text-lg md:text-xl" />
+          <span className="font-bold text-subText text-sm sm:text-base md:text-lg">
             경기 일정
-          </Typography>
+          </span>
         </div>
 
         <div className="relative group">
           <div
-            className="px-4 py-4 w-full bg-light border-2 border-disabled 
-          rounded-xl transition-all group-hover:border-primary"
+            className="px-3 sm:px-4 py-2.5 sm:py-3 md:py-4 w-full bg-light border-2 border-disabled
+          rounded-lg sm:rounded-xl transition-all group-hover:border-primary"
           >
-            <p className="text-sm sm:text-base md:text-lg font-medium text-gray-800">
-              {selectedGame ? (
-                <>
-                  {formatDate(selectedGame.date)}{" "}
-                  <span className="mx-1 sm:mx-2">/</span> FC서울 VS{" "}
-                  {selectedGame.opponent} <span className="mx-1 sm:mx-2">/</span>{" "}
+            {selectedGame ? (
+              <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center text-gray-800 font-medium gap-y-0.5">
+                <span className="text-sm sm:text-base md:text-lg whitespace-nowrap">
+                  {formatGameDateTime(selectedGame.date).formattedDate}
+                </span>
+                <span className="hidden sm:inline mx-2 text-gray-400">/</span>
+                <span className="text-sm sm:text-base md:text-lg whitespace-nowrap">
+                  FC서울 VS {selectedGame.opponent}
+                </span>
+                <span className="hidden sm:inline mx-2 text-gray-400">/</span>
+                <span className="text-sm sm:text-base md:text-lg text-gray-500 sm:text-gray-800 truncate">
                   {selectedGame.stadium}
-                </>
-              ) : (
-                "경기를 선택해주세요"
-              )}
-            </p>
+                </span>
+              </div>
+            ) : (
+              <p className="text-sm sm:text-base text-gray-500">
+                경기를 선택해주세요
+              </p>
+            )}
           </div>
 
           {/* 투명한 select는 덮어주기 */}

@@ -19,13 +19,14 @@ export const GamePicker = () => {
     }
   };
   return (
-    <div className="flex justify-end w-full max-w-5xl mt-8">
+    <div className="flex justify-stretch sm:justify-end w-full max-w-5xl mt-4 sm:mt-8">
       <button
         onClick={handleNextClick}
         disabled={!selectedGameId}
         className={`
-          flex items-center justify-center gap-2 
-          px-8 py-2.5 rounded-xl font-bold text-lg text-white
+          flex items-center justify-center gap-2
+          w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-2.5
+          rounded-lg sm:rounded-xl font-bold text-base sm:text-lg text-white
           transition-all duration-200
           ${
             selectedGameId
@@ -34,7 +35,7 @@ export const GamePicker = () => {
           }
         `}
       >
-        <HiOutlineArrowRight className="text-xl" />
+        <HiOutlineArrowRight className="text-lg sm:text-xl" />
         NEXT
       </button>
     </div>
