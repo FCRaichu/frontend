@@ -71,10 +71,10 @@ export default function PostWriteBaseLayout() {
   return (
     <div
       className={`
-      flex flex-col items-center w-full mx-auto pt-8 md:pt-16 px-4 md:px-6
+      flex flex-col items-center w-full mx-auto pt-4 md:pt-12 px-4 md:px-6
     `}
     >
-      <Typography variant="h1" className="mb-6 md:mb-10 text-xl sm:text-2xl md:text-3xl">
+      <Typography variant="h1" className="mb-2 md:mb-8 text-lg sm:text-2xl md:text-3xl">
         {isEditMode ? "직관 기록 수정하기" : "직관 기록하기"}
       </Typography>
 

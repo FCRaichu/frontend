@@ -4,8 +4,7 @@ import { useQueryClient } from "@tanstack/react-query"; // 캐시 무효화를 �
 import { useAuthStore } from "@/stores/useAuthStore";
 import { postMyRecord, putMyRecord } from "../../api/postApi";
 import type { PostRequest } from "../../types/post";
-import Typography from "@/components/common/Typography";
-
+''
 // HEIC 변환 라이브러리
 import { heicTo, isHeic } from "heic-to";
 
@@ -238,53 +237,47 @@ export default function RecordWriteStep() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full max-w-5xl mx-auto pt-2 flex flex-col gap-6 md:gap-10 pb-10">
-      <div className="flex flex-col lg:flex-row gap-12">
+      className="w-full max-w-5xl mx-auto pt-2 flex flex-col gap-4 sm:gap-6 md:gap-10 pb-10">
+      <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 lg:gap-12">
         {/* 왼쪽 섹션: 텍스트 입력 */}
-        <div className="flex-1 flex flex-col gap-8">
+        <div className="flex-1 flex flex-col gap-5 sm:gap-6 md:gap-8">
           {/* 제목 입력 */}
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-2 text-textMain">
-              <LuFilePen className="text-xl" />
-              <Typography
-                variant="body-lg"
-                color="text-textMain"
-                className="font-bold!">
+          <div className="flex flex-col gap-2 sm:gap-3 md:gap-4">
+            <div className="flex items-center gap-1.5 sm:gap-2 text-textMain">
+              <LuFilePen className="text-base sm:text-lg md:text-xl" />
+              <span className="font-bold text-textMain text-sm sm:text-base md:text-lg">
                 제목
-              </Typography>
+              </span>
             </div>
             <input
               type="text"
               value={formData.title}
               placeholder="제목을 입력하세요"
               onChange={handleTitleChange}
-              className="w-full p-4 bg-white border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-disabled transition-all text-lg"
+              className="w-full p-3 sm:p-3.5 md:p-4 bg-white border border-border rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-disabled transition-all text-sm sm:text-base md:text-lg"
             />
           </div>
 
           {/* 후기 입력 */}
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-2 text-textMain">
-              <PiSmileyFill className="text-xl" />
-              <Typography
-                variant="body-lg"
-                color="text-textMain"
-                className="font-bold!">
+          <div className="flex flex-col gap-2 sm:gap-3 md:gap-4">
+            <div className="flex items-center gap-1.5 sm:gap-2 text-textMain">
+              <PiSmileyFill className="text-base sm:text-lg md:text-xl" />
+              <span className="font-bold text-textMain text-sm sm:text-base md:text-lg">
                 직관 후기
-              </Typography>
+              </span>
             </div>
             <textarea
               placeholder="오늘 경기는 어땠나요? 상세한 후기를 남겨주세요."
               value={formData.content}
               onChange={handleTextAreaChange}
-              className="w-full min-h-72 p-5 bg-white border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-disabled transition-all text-lg"
+              className="w-full min-h-44 sm:min-h-56 md:min-h-72 p-3 sm:p-4 md:p-5 bg-white border border-border rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-disabled transition-all text-sm sm:text-base md:text-lg"
             />
           </div>
 
           <button
             type="submit"
             disabled={isSubmitDisabled}
-            className={`w-full py-4 font-bold text-xl rounded-xl transition-all shadow-lg active:scale-[0.98]
+            className={`hidden lg:block w-full py-3 sm:py-3.5 md:py-4 font-bold text-base sm:text-lg md:text-xl rounded-lg sm:rounded-xl transition-all shadow-lg active:scale-[0.98]
     ${
       isSubmitDisabled
         ? "bg-gray-300 text-white cursor-not-allowed"
@@ -293,36 +286,26 @@ export default function RecordWriteStep() {
             {isEditMode ? "수정 완료" : "저장하기"}
           </button>
 
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="shrink-0 flex items-center mt-8 gap-2 
-            text-disabledGray hover:text-secondary transition-colors font-bold text-lg cursor-pointer">
-            <span className="text-xl">←</span> 이전으로
-          </button>
         </div>
 
         {/* 오른쪽 섹션: 사진 등록 */}
-        <div className="w-full lg:w-112.5 flex flex-col gap-4">
-          <div className="flex items-center gap-2 text-textMain">
-            <TbPhotoPlus className="text-xl" />
-            <Typography
-              variant="body-lg"
-              color="text-textMain"
-              className="font-bold!">
+        <div className="w-full lg:w-112.5 flex flex-col gap-2 sm:gap-3 md:gap-4">
+          <div className="flex items-center gap-1.5 sm:gap-2 text-textMain">
+            <TbPhotoPlus className="text-base sm:text-lg md:text-xl" />
+            <span className="font-bold text-textMain text-sm sm:text-base md:text-lg">
               직관 사진{" "}
-              <span className="text-sm text-gray-400">
+              <span className="text-xs sm:text-sm text-gray-400">
                 ({existingImages.length + imageFiles.length}/4)
               </span>
-            </Typography>
+            </span>
           </div>
 
-          <div className="border-2 border-dashed border-gray-300 rounded-2xl p-6 bg-gray-50/50 flex flex-col gap-4">
-            <div className="grid grid-cols-2 gap-4 w-full">
+          <div className="border-2 border-dashed border-gray-300 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 bg-gray-50/50 flex flex-col gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 w-full">
               {existingImages.map((img, i) => (
                 <div
                   key={`ex-${i}`}
-                  className="relative aspect-square bg-gray-200 rounded-xl overflow-hidden border">
+                  className="relative aspect-square bg-gray-200 rounded-lg sm:rounded-xl overflow-hidden border">
                   <img
                     src={`${import.meta.env.VITE_IMAGE_BASE_URL}${img}`}
                     className="w-full h-full object-cover"
@@ -332,14 +315,14 @@ export default function RecordWriteStep() {
                     type="button"
                     onClick={() => removeExistingImage(i)}
                     className="absolute top-1 right-1 text-red-500 bg-white rounded-full shadow-md">
-                    <IoCloseCircle size={24} />
+                    <IoCloseCircle className="text-xl sm:text-2xl" />
                   </button>
                 </div>
               ))}
               {previews.map((url, i) => (
                 <div
                   key={`new-${i}`}
-                  className="relative aspect-square bg-gray-200 rounded-xl overflow-hidden border-2 border-primary">
+                  className="relative aspect-square bg-gray-200 rounded-lg sm:rounded-xl overflow-hidden border-2 border-primary">
                   <img
                     src={url}
                     className="w-full h-full object-cover"
@@ -349,7 +332,7 @@ export default function RecordWriteStep() {
                     type="button"
                     onClick={() => removeNewImage(i)}
                     className="absolute top-1 right-1 text-red-500 bg-white rounded-full shadow-md">
-                    <IoCloseCircle size={24} />
+                    <IoCloseCircle className="text-xl sm:text-2xl" />
                   </button>
                 </div>
               ))}
@@ -358,7 +341,7 @@ export default function RecordWriteStep() {
               }).map((_, i) => (
                 <div
                   key={`empty-${i}`}
-                  className="aspect-square bg-gray-100 rounded-xl border border-dashed border-gray-300 flex items-center justify-center text-gray-300 text-xs">
+                  className="aspect-square bg-gray-100 rounded-lg sm:rounded-xl border border-dashed border-gray-300 flex items-center justify-center text-gray-300 text-[10px] sm:text-xs">
                   IMAGE
                 </div>
               ))}
@@ -377,15 +360,38 @@ export default function RecordWriteStep() {
               type="button"
               disabled={existingImages.length + imageFiles.length >= 4}
               onClick={() => fileInputRef.current?.click()}
-              className="w-full py-4 bg-white border border-gray-300 rounded-xl flex items-center justify-center gap-2 text-gray-400 hover:text-primary hover:border-hover transition-all group cursor-pointer">
-              <HiPlus className="text-2xl transition-transform" />
-              {existingImages.length + imageFiles.length >= 4 && (
-                <span className="text-sm">최대 갯수 도달</span>
+              className="w-full py-3 sm:py-3.5 md:py-4 bg-white border border-gray-300 rounded-lg sm:rounded-xl flex items-center justify-center gap-2 text-gray-400 hover:text-primary hover:border-hover disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:text-gray-400 disabled:hover:border-gray-300 transition-all group cursor-pointer">
+              {existingImages.length + imageFiles.length >= 4 ? (
+                <span className="text-xs sm:text-sm">최대 갯수 도달</span>
+              ) : (
+                <HiPlus className="text-xl sm:text-2xl transition-transform" />
               )}
             </button>
           </div>
         </div>
       </div>
+
+      {/* 모바일 submit: 사진 아래, lg 이상에서 숨김 */}
+      <button
+        type="submit"
+        disabled={isSubmitDisabled}
+        className={`lg:hidden w-full py-3 sm:py-3.5 font-bold text-base sm:text-lg rounded-lg sm:rounded-xl transition-all shadow-lg active:scale-[0.98]
+    ${
+      isSubmitDisabled
+        ? "bg-gray-300 text-white cursor-not-allowed"
+        : "bg-primary text-white hover:bg-hover cursor-pointer"
+    }`}>
+        {isEditMode ? "수정 완료" : "저장하기"}
+      </button>
+
+      {/* 이전으로 - 폼 가장 아래 배치 */}
+      <button
+        type="button"
+        onClick={() => navigate(-1)}
+        className="self-center mt-2 flex items-center gap-2
+        text-disabledGray hover:text-secondary transition-colors font-medium text-sm sm:text-base cursor-pointer">
+        <span className="text-base sm:text-lg">←</span> 이전으로
+      </button>
     </form>
   );
 }
