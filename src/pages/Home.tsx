@@ -31,7 +31,7 @@ export default function Home() {
         setIsLanding(false);
         sessionStorage.setItem("visited", "true"); // 방문 기록 저장
       }, 800);
-    }, 5000);
+    }, 2200);
 
     return () => clearTimeout(timer);
   }, []);
