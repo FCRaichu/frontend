@@ -38,19 +38,35 @@ export default function Betting() {
     fetchActiveBetting();
   }, []);
 
+  // 시즌 종료 등으로 예정된 경기가 없으면 userId 외 값이 null 로 내려옴
+  const hasActiveGame = activeBettingData?.gameId != null;
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center pb-10 font-sans text-gray-800">
       {activeBettingData ? (
         <>
-          <ActiveBettingHeader
-            gameDate={activeBettingData.gameDate}
-            opponent={activeBettingData.opponent}
-          />
-          <div className="w-full max-w-5xl flex flex-col gap-6 mt-6 px-4 md:px-6">
-            <ActiveBettingForm
-              activeBettingData={activeBettingData}
-              onBetSuccess={fetchActiveBetting}
+          {hasActiveGame && (
+            <ActiveBettingHeader
+              gameDate={activeBettingData.gameDate}
+              opponent={activeBettingData.opponent}
             />
+          )}
+          <div className="w-full max-w-5xl flex flex-col gap-6 mt-6 px-4 md:px-6">
+            {hasActiveGame ? (
+              <ActiveBettingForm
+                activeBettingData={activeBettingData}
+                onBetSuccess={fetchActiveBetting}
+              />
+            ) : (
+              <div className="bg-white rounded-2xl shadow-sm border border-border p-8 md:p-10 text-center">
+                <p className="font-bold text-lg text-textDark">
+                  이번 시즌 FC서울의 경기가 모두 끝났습니다.
+                </p>
+                <p className="text-sm text-textSub mt-2">
+                  다음 시즌을 기다려주세요!
+                </p>
+              </div>
+            )}
             <MyBettingStats myBettingStats={myBettingStats} />
             <MyBettingHistory />
           </div>
